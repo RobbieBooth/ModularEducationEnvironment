@@ -1,0 +1,10 @@
+modules:
+  - name: AIMultiChoice
+    settings:
+      questionType: "Multiple Choice"
+      difficulty: "Medium"
+  - name: ModuleB
+    settings:
+      questionType: "True/False"
+      difficulty: "Easy"
+      customSetting: "Special Value"
