@@ -18,8 +18,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint("/gs-guide-websocket");
-		registry.addEndpoint("/ws").withSockJS(); // Register the WebSocket endpoint for clients to connect
+		registry.addEndpoint("/gs-guide-websocket").setAllowedOrigins("http://localhost:5173"); // Allow CORS for testing; restrict in production;//TODO REMOVE ALLOW ALL
+		registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:5173").withSockJS(); // Register the WebSocket endpoint for clients to connect
 	}
 
 }
