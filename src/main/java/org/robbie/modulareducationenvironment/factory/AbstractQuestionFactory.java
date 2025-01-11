@@ -1,5 +1,6 @@
 package org.robbie.modulareducationenvironment.factory;
 
+
 import org.robbie.modulareducationenvironment.QuestionState;
 
 public abstract class AbstractQuestionFactory {

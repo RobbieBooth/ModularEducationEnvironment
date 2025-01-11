@@ -21,7 +21,7 @@ public interface QuizQuestion {
     public void onQuizClose(QuizState quizState);
 
     /**
-     * Called only once when the whole quiz is submitted
+     * Called only once when the whole quiz is submitted. The save methods are called before submitted.
      * @param quizState the state of the quiz the student has submitted
      */
     public void onQuizSubmit(QuizState quizState);
@@ -52,7 +52,7 @@ public interface QuizQuestion {
     public void onThisQuestionClose(QuestionState questionState);
 
     /**
-     * Called on that question when it is submitted
+     * Called on that question when it is submitted. The save methods are called before submitted.
      * @param questionState the state of this question
      */
     public void onThisQuestionSubmit(QuestionState questionState);
@@ -97,7 +97,7 @@ public interface QuizQuestion {
 
     /**
      * Invoked on all questions within the quiz, when a question is
-     * submitted.
+     * submitted. The save methods are called before submitted.
      *
      * Note: This method may be triggered in addition to the `onThisQuestionSubmit`
      * method for the same question, so ensure your implementation accounts for
@@ -110,7 +110,7 @@ public interface QuizQuestion {
      * Invoked on all questions within the quiz, when a question is
      * saved.
      *
-     * Note: This method may be triggered in addition to the `onThisQuestionSubmit`
+     * Note: This method may be triggered in addition to the `onThisQuestionSave`
      * method for the same question, so ensure your implementation accounts for
      * potential overlaps.
      * @param questionState the state of the question that has been saved
