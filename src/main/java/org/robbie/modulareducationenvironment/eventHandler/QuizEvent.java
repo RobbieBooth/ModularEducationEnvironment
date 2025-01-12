@@ -3,6 +3,7 @@ package org.robbie.modulareducationenvironment.eventHandler;
 enum QuizClientSideEvent {
     SAVE_QUIZ,
     OPEN_QUIZ,
+    START_QUIZ,
     CLOSE_QUIZ,
     SUBMIT_QUIZ,
     MOVE_QUESTION,
@@ -11,18 +12,18 @@ enum QuizClientSideEvent {
 
 public class QuizEvent extends GenericEvent {
 
-    private QuizClientSideEvent quizClientSideEvent;
+    private QuizClientSideEvent event;
 
-    public QuizEvent(QuizClientSideEvent quizClientSideEvent) {
-        this.quizClientSideEvent = quizClientSideEvent;
+    public QuizEvent(QuizClientSideEvent event) {
+        this.event = event;
     }
 
     public QuizClientSideEvent getEvent() {
-        return quizClientSideEvent;
+        return event;
     }
 
     @Override
     public String toString() {
-        return quizClientSideEvent.toString();
+        return event.toString();
     }
 }

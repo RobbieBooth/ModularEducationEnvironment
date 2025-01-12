@@ -3,8 +3,8 @@ package org.robbie.modulareducationenvironment.eventHandler;
 import org.robbie.modulareducationenvironment.QuestionState;
 import org.robbie.modulareducationenvironment.QuizQuestion;
 import org.robbie.modulareducationenvironment.QuizState;
-import org.robbie.modulareducationenvironment.questionBank.QuestionAttempt;
-import org.robbie.modulareducationenvironment.questionBank.QuizAttempt;
+import org.robbie.modulareducationenvironment.questionBank.studentQuestionAttempt;
+import org.robbie.modulareducationenvironment.questionBank.studentQuizAttempt;
 import org.springframework.lang.NonNull;
 
 import java.util.*;
@@ -16,7 +16,7 @@ public class EventDirector {
     //direct events to the associated ones and finish process
     //They can then send an update event if needed
     //At this point we would delete them from the stack/memory
-    public static void directEvent(EventDetails eventDetails, QuizAttempt quizDatabaseAttempt, LinkedHashMap<UUID, QuizQuestion> questionList) {
+    public static void directEvent(EventDetails eventDetails, studentQuizAttempt quizDatabaseAttempt, LinkedHashMap<UUID, QuizQuestion> questionList) {
         GenericEvent genericEvent = eventDetails.getGenericEvent();
         if(genericEvent instanceof QuizEvent ) {
             QuizEvent event = (QuizEvent) genericEvent;
@@ -25,7 +25,7 @@ public class EventDirector {
         } else if (genericEvent instanceof QuestionEvent) {
             QuestionEvent event = (QuestionEvent) genericEvent;
             UUID questionUUID = eventDetails.getQuestionUUID();
-            Optional<QuestionAttempt> questionDatabaseAttempt = quizDatabaseAttempt.getQuestion(questionUUID);
+            Optional<studentQuestionAttempt> questionDatabaseAttempt = quizDatabaseAttempt.getQuestion(questionUUID);
             if(!questionDatabaseAttempt.isPresent()) {
                 //error since we cant find data/question
                 //TODO log error

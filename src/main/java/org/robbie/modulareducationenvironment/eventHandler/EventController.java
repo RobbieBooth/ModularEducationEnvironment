@@ -1,14 +1,18 @@
 package org.robbie.modulareducationenvironment.eventHandler;
 
+import org.robbie.modulareducationenvironment.QuestionState;
 import org.robbie.modulareducationenvironment.QuizQuestion;
+import org.robbie.modulareducationenvironment.QuizState;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleLoader;
-import org.robbie.modulareducationenvironment.questionBank.QuestionAttempt;
-import org.robbie.modulareducationenvironment.questionBank.QuizAttempt;
-import org.robbie.modulareducationenvironment.questionBank.QuizAttemptRepository;
+import org.robbie.modulareducationenvironment.questionBank.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,29 +22,32 @@ public class EventController {
 
     @Autowired
     private QuizAttemptRepository quizAttemptRepository;
+    @Autowired
+    private QuizRepository quizRepository;
 
     @MessageMapping("/send")
     @SendTo("/topic/event")
     public EventDetails sendMessage(EventDetails event) {
         System.out.println("Received event: " + event.getGenericEvent().toString());
-        Optional<QuizAttempt> optionalQuizAttempt = quizAttemptRepository.findById(event.getQuizUUID());
+
+        Optional<studentQuizAttempt> optionalQuizAttempt = quizAttemptRepository.findById(event.getQuizUUID());
         if (optionalQuizAttempt.isPresent()) {
-            QuizAttempt quizAttempt = optionalQuizAttempt.get();
-            List<QuestionAttempt> questions = quizAttempt.getQuestions();
+            studentQuizAttempt studentQuizAttempt = optionalQuizAttempt.get();
+            List<studentQuestionAttempt> questions = studentQuizAttempt.getQuestions();
             //Create all the question objects then process events on them
             LinkedHashMap<UUID, QuizQuestion> quizQuestionMap = questions.stream().collect(Collectors.toMap(
-                    question -> question.getQuestionAttemptUUID(), // Key: UUID of the question
+                    question -> question.getStudentQuestionAttemptUUID(), // Key: UUID of the question
                     question -> {
                         try {
                             return ModuleLoader.getQuizQuestion(question.getModuleName());
                         } catch (Exception e) {
-                            throw new RuntimeException("Failed to fetch question for UUID: " + question.getQuestionAttemptUUID(), e);
+                            throw new RuntimeException("Failed to fetch question for UUID: " + question.getStudentQuestionAttemptUUID(), e);
                         }
                     },
                     (existing, replacement) -> existing,// wont happen but is needed for next line
                     LinkedHashMap::new // Specify LinkedHashMap to preserve insertion order
             ));
-            EventDirector.directEvent(event, quizAttempt, quizQuestionMap);
+            EventDirector.directEvent(event, studentQuizAttempt, quizQuestionMap);
 
 
 //            List<QuizQuestion> allQuizQuestions = questions.stream().map(question -> {
@@ -55,5 +62,46 @@ public class EventController {
         }
         return event;
     }
+
+    @MessageMapping("/startQuiz")
+    @SendTo("/topic/event")
+    public ResponseEntity<studentQuizAttempt> getQuizById(EventDetails event) {
+        GenericEvent genericEvent = event.getGenericEvent();
+        if(genericEvent instanceof QuizEvent) {
+            QuizEvent quizEvent = (QuizEvent) genericEvent;
+            if(quizEvent.getEvent().equals(QuizClientSideEvent.START_QUIZ)){
+                Optional<Quiz> quiz = quizRepository.findById(event.getQuizUUID());
+                if(!quiz.isPresent()) {
+                    return ResponseEntity.notFound().build();
+                }
+                studentQuizAttempt value = quizAttemptRepository.save(quiz.get().createStudentQuizAttempt());
+                return ResponseEntity.ok(value);
+            }
+            if(quizEvent.getEvent().equals(QuizClientSideEvent.OPEN_QUIZ)){
+                Optional<studentQuizAttempt> optionalQuizAttempt = quizAttemptRepository.findById(event.getQuizUUID());
+                if(!optionalQuizAttempt.isPresent()) {
+                    return ResponseEntity.notFound().build();
+                }
+                return ResponseEntity.ok(optionalQuizAttempt.get());
+            }
+        }
+        //ERROR since its not right event or values
+        return ResponseEntity.notFound().build();
+    }
+
+    @PutMapping("/createData")
+    public ResponseEntity<Quiz> invokeModule() {
+        List<Question> questions = new ArrayList<>();
+        UUID questionUUID = UUID.randomUUID();
+        Question question = new Question("AIMultiChoice", questionUUID);
+        questions.add(question);
+
+        UUID quizUUID = UUID.randomUUID();
+        UUID quizVersionUUID = UUID.randomUUID();
+        Quiz quiz = quizRepository.save(new Quiz(quizVersionUUID, quizUUID,questions));
+
+        return ResponseEntity.ok(quiz);
+    }
+
 }
 
