@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public class EventDetails {
     private GenericEvent genericEvent;
+    private UUID studentUUID;
     private UUID quizUUID;
     private UUID questionUUID;//QuestionUUID or Null
     private Map<String, Object> additionalData; // Arbitrary data storage
@@ -15,6 +16,10 @@ public class EventDetails {
 
     public UUID getQuizUUID() {
         return quizUUID;
+    }
+
+    public UUID getStudentUUID() {
+        return studentUUID;
     }
 
     public UUID getQuestionUUID() {

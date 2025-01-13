@@ -24,6 +24,8 @@ public class EventController {
     private QuizAttemptRepository quizAttemptRepository;
     @Autowired
     private QuizRepository quizRepository;
+    @Autowired
+    private StudentRepository studentRepository;
 
     @MessageMapping("/send")
     @SendTo("/topic/event")
@@ -70,11 +72,13 @@ public class EventController {
         if(genericEvent instanceof QuizEvent) {
             QuizEvent quizEvent = (QuizEvent) genericEvent;
             if(quizEvent.getEvent().equals(QuizClientSideEvent.START_QUIZ)){
-                Optional<Quiz> quiz = quizRepository.findById(event.getQuizUUID());
-                if(!quiz.isPresent()) {
+                Optional<Quiz> quiz = quizRepository.findFirstByQuizUUIDOrderByCreatedAtDesc(event.getQuizUUID());
+                Optional<Student> student = studentRepository.findById(event.getStudentUUID());
+                if(!quiz.isPresent() || !student.isPresent()) {
                     return ResponseEntity.notFound().build();
                 }
-                studentQuizAttempt value = quizAttemptRepository.save(quiz.get().createStudentQuizAttempt());
+                studentQuizAttempt value = quizAttemptRepository.save(quiz.get().createStudentQuizAttempt(event.getStudentUUID()));
+                student.get().addAttemptedQuiz(value.getStudentQuizAttemptUUID());
                 return ResponseEntity.ok(value);
             }
             if(quizEvent.getEvent().equals(QuizClientSideEvent.OPEN_QUIZ)){
@@ -103,5 +107,11 @@ public class EventController {
         return ResponseEntity.ok(quiz);
     }
 
+    @PutMapping("/createStudent")
+    public ResponseEntity<Student> createStudent() {
+        UUID studentUUID = UUID.randomUUID();
+        Student student = studentRepository.save(new Student(studentUUID));
+        return ResponseEntity.ok(student);
+    }
 }
 
