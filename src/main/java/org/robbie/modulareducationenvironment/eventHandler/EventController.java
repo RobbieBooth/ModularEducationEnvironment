@@ -29,13 +29,24 @@ public class EventController {
 
     @MessageMapping("/send")
     @SendTo("/topic/event")
-    public EventDetails sendMessage(EventDetails event) {
+    public ResponseEntity<studentQuizAttempt> sendMessage(EventDetails event) {
         System.out.println("Received event: " + event.getGenericEvent().toString());
 
         Optional<studentQuizAttempt> optionalQuizAttempt = quizAttemptRepository.findById(event.getQuizUUID());
         if (optionalQuizAttempt.isPresent()) {
             studentQuizAttempt studentQuizAttempt = optionalQuizAttempt.get();
             List<studentQuestionAttempt> questions = studentQuizAttempt.getQuestions();
+
+            //if flag event do that otherwise regular dispatch
+            if(event.getGenericEvent() instanceof QuestionEvent) {
+                QuestionEvent quizEvent = (QuestionEvent) event.getGenericEvent();
+                if(quizEvent.getEvent().equals(QuestionClientSideEvent.TOGGLE_FLAG)){
+                    studentQuizAttempt.toggleFlagOnQuestion(event.getQuestionUUID());
+                    quizAttemptRepository.save(studentQuizAttempt);
+                    return ResponseEntity.ok(studentQuizAttempt);
+                }
+            }
+
             //Create all the question objects then process events on them
             LinkedHashMap<UUID, QuizQuestion> quizQuestionMap = questions.stream().collect(Collectors.toMap(
                     question -> question.getStudentQuestionAttemptUUID(), // Key: UUID of the question
@@ -62,7 +73,7 @@ public class EventController {
 
 
         }
-        return event;
+        return ResponseEntity.ok(null);
     }
 
     @MessageMapping("/startQuiz")
@@ -98,6 +109,14 @@ public class EventController {
         List<Question> questions = new ArrayList<>();
         UUID questionUUID = UUID.randomUUID();
         Question question = new Question("AIMultiChoice", questionUUID);
+        questions.add(question);
+
+        questionUUID = UUID.randomUUID();
+        question = new Question("AIMultiChoice", questionUUID);
+        questions.add(question);
+
+        questionUUID = UUID.randomUUID();
+        question = new Question("AIMultiChoice", questionUUID);
         questions.add(question);
 
         UUID quizUUID = UUID.randomUUID();

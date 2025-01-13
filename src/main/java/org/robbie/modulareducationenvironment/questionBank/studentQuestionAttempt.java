@@ -7,7 +7,7 @@ import java.util.UUID;
 public class studentQuestionAttempt extends Question{
     @Id
     private UUID studentQuestionAttemptUUID;
-    private boolean flagged = false;
+    private boolean flagged = true;
 //    private UUID questionTemplateUUID;
 //    private String moduleName;
 
@@ -23,5 +23,9 @@ public class studentQuestionAttempt extends Question{
 
     public boolean isFlagged() {
         return flagged;
+    }
+
+    public void toggleFlagged() {
+        this.flagged = !flagged;
     }
 }

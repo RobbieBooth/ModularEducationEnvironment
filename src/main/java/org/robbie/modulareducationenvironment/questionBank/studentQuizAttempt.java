@@ -57,4 +57,19 @@ public class studentQuizAttempt{
                 .filter(question -> question.getStudentQuestionAttemptUUID().equals(questionUUID)) // Filter based on UUID
                 .findFirst(); // Get the first matching question (if any)
     }
+
+    /**
+     * Toggle the flag on the question. If the question isn't found `false` is returned else `true`.
+     * @param studentQuestionAttemptUUID The question to be found
+     * @return if the question has been found and successfully toggled `true`, otherwise `false`
+     */
+    public boolean toggleFlagOnQuestion(UUID studentQuestionAttemptUUID) {
+        Optional<studentQuestionAttempt> studentQuestionAttemptOptional = questions.stream()
+                .filter(question -> question.getStudentQuestionAttemptUUID().equals(studentQuestionAttemptUUID)).findFirst();
+        if(studentQuestionAttemptOptional.isPresent()) {
+            studentQuestionAttemptOptional.get().toggleFlagged();
+            return true;
+        }
+        return false;
+    }
 }

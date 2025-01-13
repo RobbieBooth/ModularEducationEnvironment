@@ -3,6 +3,7 @@ package org.robbie.modulareducationenvironment.eventHandler;
 enum QuestionClientSideEvent{
     SAVE_QUESTION,
     SUBMIT_QUESTION,
+    TOGGLE_FLAG
 }
 
 public class QuestionEvent extends GenericEvent{
