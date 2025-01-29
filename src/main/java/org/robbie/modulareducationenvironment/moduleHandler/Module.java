@@ -1,15 +1,19 @@
 package org.robbie.modulareducationenvironment.moduleHandler;
 
+import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.BaseSetting;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Module {
     private String name;
-    private Map<String, String> settings;
+    private Map<String, String> globalSettings;
+    private BaseSetting defaultQuestionSettings;
 
     public Module() {
         name = null;
-        settings = new HashMap<>();
+        globalSettings = new HashMap<>();
+        defaultQuestionSettings = null;
     }
 
     public String getName() {
@@ -20,11 +24,19 @@ public class Module {
         this.name = name;
     }
 
-    public Map<String, String> getSettings() {
-        return settings;
+    public Map<String, String> getGlobalSettings() {
+        return globalSettings;
     }
 
-    public void setSettings(Map<String, String> settings) {
-        this.settings = settings;
+    public void setGlobalSettings(Map<String, String> globalSettings) {
+        this.globalSettings = globalSettings;
+    }
+
+    public BaseSetting getDefaultQuestionSettings() {
+        return defaultQuestionSettings;
+    }
+
+    public void setDefaultQuestionSettings(BaseSetting defaultQuestionSettings) {
+        this.defaultQuestionSettings = defaultQuestionSettings;
     }
 }
