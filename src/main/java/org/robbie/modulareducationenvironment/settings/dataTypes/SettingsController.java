@@ -63,9 +63,9 @@ public class SettingsController {
      * @return The Quiz Settings
      */
     private QuizSettings getQuizSettings(Quiz quiz) {
-        Map<UUID, Pair<String, BaseSetting>> questionSettings = new HashMap<>();
+        Map<UUID, Tuple<String, BaseSetting>> questionSettings = new HashMap<>();
         quiz.getQuestions().forEach((question -> {
-            questionSettings.put(question.getQuestionTemplateUUID(), Pair.of(question.getModuleName(), question.getQuestionSetting()));
+            questionSettings.put(question.getQuestionTemplateUUID(), new Tuple(question.getModuleName(), question.getQuestionSetting()));
         }));
 
         QuizSettings quizSettings = new QuizSettings(
