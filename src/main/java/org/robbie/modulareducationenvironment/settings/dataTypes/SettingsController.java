@@ -26,8 +26,14 @@ public class SettingsController {
             //get default
             return ResponseEntity.ok(QuizSettings.createDefaultQuizSettings(moduleConfig));
         }
+        //Catch error on when the id is not assignable to a uuid
+        UUID quizUUID;
+        try{
+            quizUUID = UUID.fromString(quizID);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
 
-        UUID quizUUID = UUID.fromString(quizID);
         Optional<Quiz> optionalQuiz = quizRepository.findFirstByQuizUUIDOrderByCreatedAtDesc(quizUUID);
         if(!optionalQuiz.isPresent()) {
             return ResponseEntity.notFound().build();
