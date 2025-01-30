@@ -36,6 +36,17 @@ public class Quiz {
         this.quizUUID = quizUUID;
     }
 
+    public Quiz(UUID quizVersionIdentifier, UUID quizUUID, Date createdAt, List<Question> questions, BaseSetting quizSettings) {
+        this.quizVersionIdentifier = quizVersionIdentifier;
+        this.quizUUID = quizUUID;
+        this.createdAt = createdAt;
+        this.questions = questions;
+        this.quizSettings = quizSettings;
+    }
+
+    public Quiz() {
+    }
+
     public List<Question> getQuestions() {
         return questions;
     }

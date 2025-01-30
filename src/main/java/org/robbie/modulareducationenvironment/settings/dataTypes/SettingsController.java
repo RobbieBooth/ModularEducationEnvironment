@@ -39,7 +39,7 @@ public class SettingsController {
     }
 
     // Save settings for a quiz
-    @PostMapping
+    @PostMapping("/save")
     public ResponseEntity<QuizSettings> saveQuizSettings(@RequestBody QuizSettings settings) {
         UUID newVersionID = UUID.randomUUID();
         List<Question> questions = new ArrayList<>();
