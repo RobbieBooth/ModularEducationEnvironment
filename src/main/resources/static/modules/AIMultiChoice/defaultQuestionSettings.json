@@ -1,0 +1,28 @@
+{
+  "type": "Group",
+  "label": "Appearance Settings",
+  "tooltip": "Adjust appearance-related settings",
+  "required": false,
+  "disabled": false,
+  "children": [
+    {
+      "type": "Select",
+      "label": "Theme",
+      "tooltip": "Select a theme",
+      "required": false,
+      "disabled": false,
+      "value": ["Dark"],
+      "availableValues": ["Light", "Dark", "System"],
+      "multiSelect": false
+    },
+    {
+      "type": "Toggle",
+      "label": "Enable Animations",
+      "tooltip": "Toggle animations on or off",
+      "required": false,
+      "disabled": false,
+      "value": true,
+      "display": "Switch"
+    }
+  ]
+}

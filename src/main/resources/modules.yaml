@@ -1,10 +1,10 @@
 modules:
   - name: AIMultiChoice
-    settings:
+    globalSettings:
       questionType: "Multiple Choice"
       difficulty: "Medium"
   - name: ModuleB
-    settings:
+    globalSettings:
       questionType: "True/False"
       difficulty: "Easy"
       customSetting: "Special Value"
