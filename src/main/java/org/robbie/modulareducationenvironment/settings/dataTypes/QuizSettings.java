@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.cfg.BaseSettings;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleConfig;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleLoader;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.QuestionSettingReader;
-import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.BaseSetting;
-import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.ConditionalBoolSetting;
-import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.GroupSetting;
-import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.ToggleSetting;
+import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.*;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.ToggleDisplayType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -47,13 +44,13 @@ public class QuizSettings {
             ClassPathResource resource = new ClassPathResource("static/DefaultQuizSettings.json");
             quizSettings = QuestionSettingReader.readSettingJson(resource.getFile());
         } catch (IOException e) {
-            //TODO just add a description settings option for this exact problem
-            quizSettings = new GroupSetting(
+            quizSettings = new ErrorSetting(
+                    "Error",
+                    "An error happened getting the default quiz settings.",
+                    false,
+                    false,
                     "Error loading default settings",
-                    e.getMessage(),
-                    false,
-                    false,
-                    new ArrayList<>()
+                    e.getMessage()
             );
         }
 

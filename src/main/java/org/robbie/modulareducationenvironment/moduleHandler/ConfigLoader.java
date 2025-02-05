@@ -1,6 +1,7 @@
 package org.robbie.modulareducationenvironment.moduleHandler;
 
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.BaseSetting;
+import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.ErrorSetting;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.GroupSetting;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,13 +39,13 @@ public class ConfigLoader {
                 //Get default questions from the module
                 defaultQuestionSetting = ModuleLoader.getDefaultSetting(module.getName(), module.getGlobalSettings());
             } catch (Exception e) {
-                //TODO just add a description settings option for this exact problem
-                defaultQuestionSetting = new GroupSetting(
-                        "Error loading default settings by config loader",
-                        e.getMessage(),
+                defaultQuestionSetting = new ErrorSetting(
+                        "Error",
+                        "An error happened loading "+module.getName()+" config.",
                         false,
                         false,
-                        new ArrayList<>()
+                        "Error loading default settings for "+module.getName(),
+                        e.getMessage()
                 );
             }
             module.setDefaultQuestionSettings(defaultQuestionSetting);

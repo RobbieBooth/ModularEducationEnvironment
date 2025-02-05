@@ -5,6 +5,7 @@ import org.robbie.modulareducationenvironment.factory.AbstractQuestionFactory;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleLoader;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.QuestionSettingReader;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.BaseSetting;
+import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.ErrorSetting;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.GroupSetting;
 import org.springframework.core.io.ClassPathResource;
 
@@ -16,6 +17,8 @@ import java.util.Map;
 
 
 public class QuestionFactory extends AbstractQuestionFactory {
+    final String MODULE_NAME = "AIMultiChoice";
+
     @Override
     public String createPage(QuestionState state) {
         return "index.html";
@@ -24,7 +27,7 @@ public class QuestionFactory extends AbstractQuestionFactory {
     @Override
     public BaseSetting getDefaultQuestionSettings(Map<String, String> globalSettings) {
         try{
-            System.out.println(ModuleLoader.getModuleResourcePath("AIMultiChoice") + "defaultQuestionSettings.json");
+            System.out.println(ModuleLoader.getModuleResourcePath(MODULE_NAME) + "defaultQuestionSettings.json");
 //            URL path = getClass().getClassLoader().getResource(ModuleLoader.getModuleResourcePath("AIMultiChoice") + "defaultQuestionSettings.json");
 //            System.out.println(path.toString());
 //            File file = new File(path.getFile());
@@ -36,13 +39,13 @@ public class QuestionFactory extends AbstractQuestionFactory {
 
             return QuestionSettingReader.readSettingJson(resource.getFile());
         } catch (IOException e) {
-            //TODO just add a description settings option for this exact problem
-            return new GroupSetting(
-              "Error loading default settings",
-                e.getMessage(),
+            return new ErrorSetting(
+              "Error",
+                    "An error happened getting the quiz settings for "+MODULE_NAME,
                     false,
                     false,
-                    new ArrayList<>()
+                    "Error loading default settings for "+MODULE_NAME,
+                    e.getMessage()
             );
         }
 

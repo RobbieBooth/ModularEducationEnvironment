@@ -5,6 +5,8 @@ public enum SettingType {
     Input,
     Select,
     File,
+    Error,
+    Description,
     Group,
     ListSetting,
     ConditionalBool,

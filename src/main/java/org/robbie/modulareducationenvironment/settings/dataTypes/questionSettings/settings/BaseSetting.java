@@ -15,6 +15,8 @@ import org.robbie.modulareducationenvironment.settings.dataTypes.questionSetting
         @JsonSubTypes.Type(value = InputSetting.class, name = "Input"),
         @JsonSubTypes.Type(value = SelectSetting.class, name = "Select"),
         @JsonSubTypes.Type(value = FileInputSetting.class, name = "File"),
+        @JsonSubTypes.Type(value = ErrorSetting.class, name = "Error"),
+        @JsonSubTypes.Type(value = DescriptionSetting.class, name = "Description"),
         @JsonSubTypes.Type(value = GroupSetting.class, name = "Group"),
         @JsonSubTypes.Type(value = ListSetting.class, name = "ListSetting"),
         @JsonSubTypes.Type(value = ConditionalBoolSetting.class, name = "ConditionalBool"),
