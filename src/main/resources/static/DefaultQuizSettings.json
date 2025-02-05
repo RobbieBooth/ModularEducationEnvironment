@@ -1,57 +1,115 @@
 {
-  "type": "ConditionalBool",
-  "label": "Allow Outside Requests",
-  "tooltip": "Allow requests from other websites to the application",
+  "type": "Group",
+  "label": "Quiz Settings",
+  "tooltip": "Default settings for the quiz.",
   "required": true,
   "disabled": false,
-  "condition": {
-    "type": "Toggle",
-    "tooltip": "Allow requests from other websites to the application",
-    "label": "Enable Outside Requests",
-    "required": true,
-    "disabled": false,
-    "value": false,
-    "display": "Switch"
-  },
-  "children": {
-    "type": "ConditionalBool",
-    "tooltip": null,
-    "label": null,
-    "required": true,
-    "disabled": false,
-    "not": true,
-    "condition": {
-      "type": "Toggle",
-      "tooltip": "Allow all requests from external website",
-      "label": "Allow All Requests",
+  "children": [
+    {
+      "type": "Input",
+      "label": "Quiz Name",
+      "tooltip": "Enter the name of the quiz.",
       "required": true,
+      "disabled": false,
+      "value": "",
+      "maxCharacters": 100,
+      "maxLines": "1"
+    },
+    {
+      "type": "Toggle",
+      "label": "Randomize Question Order",
+      "tooltip": "Enable to shuffle the question order for each attempt.",
+      "required": false,
       "disabled": false,
       "value": false,
       "display": "Checkbox"
     },
-    "children": {
-      "type": "ListSetting",
-      "tooltip": "Define the website urls allowed to make requests for these questions",
-      "label": "Define allowed URLS",
+    {
+      "type": "ConditionalBool",
+      "label": "Attempts Allowed",
+      "tooltip": "If enabled, users can attempt the quiz infinitely.",
       "required": false,
       "disabled": false,
-      "allowAddition": true,
-      "allowRemoval": true,
-      "maxAmount": null,
-      "minAmount": null,
-      "children": [],
-      "settingToAdd":
-      {
+      "not": true,
+      "condition": {
+        "type": "Toggle",
+        "label": "Infinite Attempts",
+        "tooltip": "Enable this to allow students to answer the quiz infinite times.",
+        "required": false,
+        "disabled": false,
+        "value": false,
+        "display": "Switch"
+      },
+      "children": {
         "type": "Input",
-        "tooltip": "The website/URL allowed to make the request",
-        "label": "Website URL",
+        "label": "Max Attempts",
+        "tooltip": "Specify the maximum number of attempts allowed.",
         "required": true,
         "disabled": false,
-        "value": "",
-        "maxCharacters": null,
+        "value": "1",
+        "maxCharacters": 2,
         "maxLines": "1"
       }
+    },
+    {
+      "type": "ConditionalBool",
+      "label": "Allow Outside Requests",
+      "tooltip": "Allow requests from other websites to the application",
+      "required": true,
+      "disabled": false,
+      "condition": {
+        "type": "Toggle",
+        "tooltip": "Allow requests from other websites to the application",
+        "label": "Enable Outside Requests",
+        "required": true,
+        "disabled": false,
+        "value": false,
+        "display": "Switch"
+      },
+      "children": {
+        "type": "ConditionalBool",
+        "tooltip": null,
+        "label": null,
+        "required": true,
+        "disabled": false,
+        "not": true,
+        "condition": {
+          "type": "Toggle",
+          "tooltip": "Allow all requests from external website",
+          "label": "Allow All Requests",
+          "required": true,
+          "disabled": false,
+          "value": false,
+          "display": "Checkbox"
+        },
+        "children": {
+          "type": "ListSetting",
+          "tooltip": "Define the website urls allowed to make requests for these questions",
+          "label": "Define allowed URLS",
+          "required": false,
+          "disabled": false,
+          "allowAddition": true,
+          "allowRemoval": true,
+          "maxAmount": null,
+          "minAmount": null,
+          "children": [],
+          "settingToAdd":
+          {
+            "type": "Input",
+            "tooltip": "The website/URL allowed to make the request",
+            "label": "Website URL",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": "1"
+          }
 
+        }
+      }
     }
-  }
+  ]
 }
+
+
+
