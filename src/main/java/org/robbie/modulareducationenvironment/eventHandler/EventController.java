@@ -1,17 +1,15 @@
 package org.robbie.modulareducationenvironment.eventHandler;
 
-import org.robbie.modulareducationenvironment.QuestionState;
 import org.robbie.modulareducationenvironment.QuizQuestion;
-import org.robbie.modulareducationenvironment.QuizState;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleLoader;
 import org.robbie.modulareducationenvironment.questionBank.*;
+import org.robbie.modulareducationenvironment.userManagement.UserRepository;
+import org.robbie.modulareducationenvironment.userManagement.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.*;
@@ -25,7 +23,7 @@ public class EventController {
     @Autowired
     private QuizRepository quizRepository;
     @Autowired
-    private StudentRepository studentRepository;
+    private UserRepository userRepository;
 
     @MessageMapping("/send")
     @SendTo("/topic/event")
@@ -84,12 +82,12 @@ public class EventController {
             QuizEvent quizEvent = (QuizEvent) genericEvent;
             if(quizEvent.getEvent().equals(QuizClientSideEvent.START_QUIZ)){
                 Optional<Quiz> quiz = quizRepository.findFirstByQuizUUIDOrderByCreatedAtDesc(event.getQuizUUID());
-                Optional<Student> student = studentRepository.findById(event.getStudentUUID());
+                Optional<User> student = userRepository.findById(event.getStudentUUID());
                 if(!quiz.isPresent() || !student.isPresent()) {
                     return ResponseEntity.notFound().build();
                 }
                 studentQuizAttempt value = quizAttemptRepository.save(quiz.get().createStudentQuizAttempt(event.getStudentUUID()));
-                student.get().addAttemptedQuiz(value.getStudentQuizAttemptUUID());
+//                student.get().addAttemptedQuiz(value.getStudentQuizAttemptUUID());//TODO fix here when adding attempts to class
                 return ResponseEntity.ok(value);
             }
             if(quizEvent.getEvent().equals(QuizClientSideEvent.OPEN_QUIZ)){
@@ -127,10 +125,10 @@ public class EventController {
     }
 
     @PutMapping("/createStudent")
-    public ResponseEntity<Student> createStudent() {
+    public ResponseEntity<User> createStudent() {
         UUID studentUUID = UUID.randomUUID();
-        Student student = studentRepository.save(new Student(studentUUID));
-        return ResponseEntity.ok(student);
+        User user = userRepository.save(new User(studentUUID));
+        return ResponseEntity.ok(user);
     }
 }
 
