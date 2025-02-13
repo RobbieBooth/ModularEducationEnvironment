@@ -4,6 +4,7 @@ import org.robbie.modulareducationenvironment.jwt.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -23,9 +24,12 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
     JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(SECRET);
     http
             .csrf(csrf -> csrf.disable())
+//            .cors(cors -> cors.disable())
             .authorizeHttpRequests(auth ->
 //                    auth.requestMatchers("/settings").hasRole("user") // Spring will check for "ROLE_EDUCATOR"
-                            auth.requestMatchers("/error").permitAll().anyRequest().authenticated())
+                    auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight OPTION
+                            .requestMatchers("/error").permitAll()
+                                    .anyRequest().authenticated())
             .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .anonymous(anonymous -> anonymous.disable()) // Disable anonymous authentication because its causing true jwt to get over ridden!!!
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

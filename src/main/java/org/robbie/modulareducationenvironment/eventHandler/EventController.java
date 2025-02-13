@@ -101,34 +101,5 @@ public class EventController {
         //ERROR since its not right event or values
         return ResponseEntity.notFound().build();
     }
-
-    @PutMapping("/createData")
-    public ResponseEntity<Quiz> invokeModule() {
-        List<Question> questions = new ArrayList<>();
-        UUID questionUUID = UUID.randomUUID();
-        Question question = new Question("AIMultiChoice", questionUUID);
-        questions.add(question);
-
-        questionUUID = UUID.randomUUID();
-        question = new Question("AIMultiChoice", questionUUID);
-        questions.add(question);
-
-        questionUUID = UUID.randomUUID();
-        question = new Question("AIMultiChoice", questionUUID);
-        questions.add(question);
-
-        UUID quizUUID = UUID.randomUUID();
-        UUID quizVersionUUID = UUID.randomUUID();
-        Quiz quiz = quizRepository.save(new Quiz(quizVersionUUID, quizUUID,questions));
-
-        return ResponseEntity.ok(quiz);
-    }
-
-    @PutMapping("/createStudent")
-    public ResponseEntity<User> createStudent() {
-        UUID studentUUID = UUID.randomUUID();
-        User user = userRepository.save(new User(studentUUID));
-        return ResponseEntity.ok(user);
-    }
 }
 

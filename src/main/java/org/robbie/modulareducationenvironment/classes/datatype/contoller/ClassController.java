@@ -2,8 +2,13 @@ package org.robbie.modulareducationenvironment.classes.datatype.contoller;
 
 import org.robbie.modulareducationenvironment.authentication.UserRoles;
 import org.robbie.modulareducationenvironment.classes.datatype.EditClassRequest;
+import org.robbie.modulareducationenvironment.moduleHandler.ModuleConfig;
+import org.robbie.modulareducationenvironment.questionBank.Question;
 import org.robbie.modulareducationenvironment.questionBank.Quiz;
+import org.robbie.modulareducationenvironment.questionBank.QuizRepository;
 import org.robbie.modulareducationenvironment.settings.dataTypes.QuizSettings;
+import org.robbie.modulareducationenvironment.settings.dataTypes.Tuple;
+import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.BaseSetting;
 import org.robbie.modulareducationenvironment.userManagement.User;
 import org.robbie.modulareducationenvironment.userManagement.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -234,6 +239,11 @@ class ClassController {
     @Autowired
     private ClassService classService;
 
+    @Autowired
+    private QuizRepository quizRepository;
+    @Autowired
+    private ModuleConfig moduleConfig;
+
 
     /**
      * Updates the existing class by its id else it creates a default one by that id
@@ -258,5 +268,70 @@ class ClassController {
         return classService.getClassById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // Save settings for a quiz
+    @PostMapping("/{classID}/quiz/setting/save")
+    public ResponseEntity<QuizSettings> saveQuizSettings(@PathVariable UUID classID, @RequestBody QuizSettings settings) {
+        UUID newVersionID = UUID.randomUUID();
+        List<Question> questions = new ArrayList<>();
+        settings.getQuestions().forEach((key, value) -> {
+            questions.add(new Question(value.getFirst(), key, value.getSecond()));//module, UUID, setting
+        });
+
+        settings.getNewQuestions().forEach(value -> {
+            questions.add(new Question(value.getFirst(), UUID.randomUUID(), value.getSecond()));//module, UUID, setting
+        });
+
+        Quiz newQuiz = quizRepository.save(new Quiz(newVersionID, settings.getQuizUUID(), classID, questions, settings.getQuizSetting()));
+
+        return ResponseEntity.ok(getQuizSettings(newQuiz));
+    }
+
+    //on no quizID specified default is given
+    @GetMapping({"/{classID}/quiz/setting/{quizID}", "/{classID}/quiz/setting/"})  // Supports both /v1/api/setting/ and /v1/api/setting/{quizID}
+    public ResponseEntity<QuizSettings> getQuizSettings(@PathVariable String classID, @PathVariable(required = false) String quizID) {
+        if(quizID == null) {
+            //get default
+            return ResponseEntity.ok(QuizSettings.createDefaultQuizSettings(moduleConfig));
+        }
+        //Catch error on when the id is not assignable to a uuid
+        UUID quizUUID;
+        try{
+            quizUUID = UUID.fromString(quizID);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Optional<Quiz> optionalQuiz = quizRepository.findFirstByQuizUUIDOrderByCreatedAtDesc(quizUUID);
+        if(!optionalQuiz.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        Quiz quiz = optionalQuiz.get();
+        QuizSettings quizSettings = getQuizSettings(quiz);
+
+        return ResponseEntity.ok(quizSettings);
+    }
+
+    /**
+     * Get the Quiz Settings from the quiz Document provided
+     * @param quiz The mongoDB quiz Document
+     * @return The Quiz Settings
+     */
+    private QuizSettings getQuizSettings(Quiz quiz) {
+        Map<UUID, Tuple<String, BaseSetting>> questionSettings = new HashMap<>();
+        quiz.getQuestions().forEach((question -> {
+            questionSettings.put(question.getQuestionTemplateUUID(), new Tuple(question.getModuleName(), question.getQuestionSetting()));
+        }));
+
+        QuizSettings quizSettings = new QuizSettings(
+                quiz.getQuizUUID(),
+                quiz.getQuizVersionIdentifier(),
+                quiz.getQuizSettings(),
+                moduleConfig.getDefaultModuleSettingMap(),
+                questionSettings,
+                new ArrayList<>()
+        );
+        return quizSettings;
     }
 }
