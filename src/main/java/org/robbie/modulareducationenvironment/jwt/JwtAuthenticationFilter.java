@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -15,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -47,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 // Set authentication with multiple roles
                 PreAuthenticatedAuthenticationToken auth =
-                        new PreAuthenticatedAuthenticationToken(userUUID, null, authorities);
+                        new PreAuthenticatedAuthenticationToken(UUID.fromString(userUUID), null, authorities);
 
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
@@ -75,6 +77,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return headerAuth.substring(7);
         }
         return null;
+    }
+
+    /**
+     * Gets the users UUID. If the user is not authenticated RuntimeException is thrown.
+     * @return the users UUID
+     * @throws RuntimeException
+     */
+    public static UUID getUserUUID() throws RuntimeException{
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Check if the user is authenticated
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
+            throw new RuntimeException("User is not authenticated");
+        }
+
+        // The UUID was set as the principal in JwtAuthenticationFilter
+        return (UUID) authentication.getPrincipal();
     }
 
 }

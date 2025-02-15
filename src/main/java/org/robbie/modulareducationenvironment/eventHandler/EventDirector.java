@@ -159,6 +159,7 @@ public class EventDirector {
             question.onQuestionSave(questionState);
         });
     }
+
     private static void callCloseQuestionEvent(QuizQuestion targetQuestion, QuestionState questionState, Map<UUID, QuizQuestion> questionList) {
         if(targetQuestion != null) {
             targetQuestion.onThisQuestionClose(questionState);

@@ -1,16 +1,17 @@
 package org.robbie.modulareducationenvironment.eventHandler;
 
 import org.robbie.modulareducationenvironment.QuizQuestion;
+import org.robbie.modulareducationenvironment.jwt.JwtAuthenticationFilter;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleLoader;
 import org.robbie.modulareducationenvironment.questionBank.*;
 import org.robbie.modulareducationenvironment.userManagement.UserRepository;
 import org.robbie.modulareducationenvironment.userManagement.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,7 +29,13 @@ public class EventController {
     @MessageMapping("/send")
     @SendTo("/topic/event")
     public ResponseEntity<studentQuizAttempt> sendMessage(EventDetails event) {
-        System.out.println("Received event: " + event.getGenericEvent().toString());
+        //Get user who requested id
+        UUID userUUID;
+        try{
+            userUUID = JwtAuthenticationFilter.getUserUUID();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
 
         Optional<studentQuizAttempt> optionalQuizAttempt = quizAttemptRepository.findById(event.getQuizUUID());
         if (optionalQuizAttempt.isPresent()) {
@@ -77,16 +84,24 @@ public class EventController {
     @MessageMapping("/startQuiz")
     @SendTo("/topic/event")
     public ResponseEntity<studentQuizAttempt> getQuizById(EventDetails event) {
+        //Get user who requested id
+        UUID userUUID;
+        try{
+            userUUID = JwtAuthenticationFilter.getUserUUID();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
         GenericEvent genericEvent = event.getGenericEvent();
         if(genericEvent instanceof QuizEvent) {
             QuizEvent quizEvent = (QuizEvent) genericEvent;
             if(quizEvent.getEvent().equals(QuizClientSideEvent.START_QUIZ)){
                 Optional<Quiz> quiz = quizRepository.findFirstByQuizUUIDOrderByCreatedAtDesc(event.getQuizUUID());
-                Optional<User> student = userRepository.findById(event.getStudentUUID());
+                Optional<User> student = userRepository.findById(userUUID);
                 if(!quiz.isPresent() || !student.isPresent()) {
                     return ResponseEntity.notFound().build();
                 }
-                studentQuizAttempt value = quizAttemptRepository.save(quiz.get().createStudentQuizAttempt(event.getStudentUUID()));
+                studentQuizAttempt value = quizAttemptRepository.save(quiz.get().createStudentQuizAttempt(userUUID));
 //                student.get().addAttemptedQuiz(value.getStudentQuizAttemptUUID());//TODO fix here when adding attempts to class
                 return ResponseEntity.ok(value);
             }
