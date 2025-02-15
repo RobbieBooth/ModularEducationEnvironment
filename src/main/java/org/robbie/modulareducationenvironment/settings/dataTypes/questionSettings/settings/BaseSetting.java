@@ -2,6 +2,7 @@ package org.robbie.modulareducationenvironment.settings.dataTypes.questionSettin
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.ValueHolder;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.SettingType;
 
 //Cast types
@@ -79,5 +80,8 @@ public abstract class BaseSetting {
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }
+
+    // Abstract method for getting value
+    public abstract ValueHolder getValueHolder();
 }
 

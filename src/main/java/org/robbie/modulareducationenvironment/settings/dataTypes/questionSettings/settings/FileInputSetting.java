@@ -1,5 +1,6 @@
 package org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings;
 
+import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.ValueHolder;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.FileAcceptType;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.SettingType;
 
@@ -21,6 +22,11 @@ public class FileInputSetting extends BaseSetting {
 
     public FileInputSetting() {
         super(SettingType.File);
+    }
+
+    @Override
+    public ValueHolder getValueHolder() {
+        return new ValueHolder(files, this.getType());
     }
 
     // Getters and setters

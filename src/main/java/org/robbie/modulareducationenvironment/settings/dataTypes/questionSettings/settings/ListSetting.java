@@ -1,8 +1,10 @@
 package org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings;
 
+import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.ValueHolder;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.SettingType;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ListSetting extends BaseSetting {
     private List<BaseSetting> children;
@@ -24,6 +26,12 @@ public class ListSetting extends BaseSetting {
 
     public ListSetting() {
         super(SettingType.ListSetting);
+    }
+
+    @Override
+    public ValueHolder getValueHolder() {
+        List<ValueHolder> allChildren = children.stream().map((setting) -> setting.getValueHolder()).collect(Collectors.toList());
+        return new ValueHolder(allChildren, this.getType());
     }
 
     // Getters and setters
