@@ -7,33 +7,50 @@ import java.util.UUID;
 
 public class AvailableQuiz {
 
-    private String id;
+    private UUID id;
     private QuizInfo quizInfo;
-    private Optional<LocalDateTime> endTime; // Optional
+    private Optional<Long> startTime; // Unix time in milliseconds
+    private Optional<Long> endTime;   // Unix time in milliseconds
     private Optional<List<UUID>> studentsAvailableTo; // Optional
     private boolean useLatestVersion;
     private List<SampleStudentAttempt> studentAttempts;
     private boolean instantResult;
+    private Optional<Integer> maxAttemptCount; // null for infinite attempts
 
     // Constructors
     public AvailableQuiz() {}
 
-    public AvailableQuiz(QuizInfo quizInfo, Optional<LocalDateTime> endTime, Optional<List<UUID>> studentsAvailableTo, boolean useLatestVersion, List<SampleStudentAttempt> studentAttempts, boolean instantResult) {
+    public AvailableQuiz(UUID id, QuizInfo quizInfo, Optional<Long> startTime, Optional<Long> endTime, Optional<List<UUID>> studentsAvailableTo,
+                         boolean useLatestVersion, List<SampleStudentAttempt> studentAttempts, boolean instantResult,
+                         Optional<Integer> maxAttemptCount) {
+        this.id = id;
         this.quizInfo = quizInfo;
+        this.startTime = startTime;
         this.endTime = endTime;
         this.studentsAvailableTo = studentsAvailableTo;
         this.useLatestVersion = useLatestVersion;
         this.studentAttempts = studentAttempts;
         this.instantResult = instantResult;
+        this.maxAttemptCount = maxAttemptCount;
     }
 
     // Getters and Setters
-    public String getId() {
+
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
+    }
+
+    public Optional<Integer> getMaxAttemptCount() {
+        return maxAttemptCount;
+    }
+
+    public void setMaxAttemptCount(Optional<Integer> maxAttemptCount) {
+        this.maxAttemptCount = maxAttemptCount;
     }
 
     public QuizInfo getQuizInfo() {
@@ -44,11 +61,19 @@ public class AvailableQuiz {
         this.quizInfo = quizInfo;
     }
 
-    public Optional<LocalDateTime> getEndTime() {
+    public Optional<Long> getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Optional<Long> startTime) {
+        this.startTime = startTime;
+    }
+
+    public Optional<Long> getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Optional<LocalDateTime> endTime) {
+    public void setEndTime(Optional<Long> endTime) {
         this.endTime = endTime;
     }
 

@@ -16,6 +16,16 @@
       "maxLines": "1"
     },
     {
+      "type": "Input",
+      "label": "Quiz Description",
+      "tooltip": "Enter the description of the quiz.",
+      "required": true,
+      "disabled": false,
+      "value": "",
+      "maxCharacters": null,
+      "maxLines": null
+    },
+    {
       "type": "Toggle",
       "label": "Randomize Question Order",
       "tooltip": "Enable to shuffle the question order for each attempt.",
