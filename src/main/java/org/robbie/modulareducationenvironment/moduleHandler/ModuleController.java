@@ -1,6 +1,7 @@
 package org.robbie.modulareducationenvironment.moduleHandler;
 
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.websocket.server.PathParam;
 import org.robbie.modulareducationenvironment.QuestionState;
 import org.springframework.stereotype.Controller;
@@ -22,11 +23,18 @@ public class ModuleController {
 
     @GetMapping("/invoke/{moduleName}")
     public String invokeModule(
-            @PathVariable String moduleName) {
+            @PathVariable String moduleName,
+            HttpServletResponse response) {
         try {
             // Dynamically invoke the Factory class and method with settings
             Object result = ModuleLoader.invokeFactory(moduleName, new QuestionState());
             System.out.println("modules/"+moduleName+"/"+result.toString());
+
+            // Set headers to allow iframe embedding
+            response.setHeader("X-Frame-Options", "SAMEORIGIN");
+            response.setHeader("Content-Security-Policy", "frame-ancestors 'self' http://localhost:5173");//TODO change this to env variable of location domain - this allows iframe to load
+
+
             return "/modules/"+moduleName+"/"+result.toString();
 
 //            return result.toString();

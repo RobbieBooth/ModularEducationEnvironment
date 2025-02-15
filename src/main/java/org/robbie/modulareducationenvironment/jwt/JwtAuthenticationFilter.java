@@ -95,5 +95,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // The UUID was set as the principal in JwtAuthenticationFilter
         return (UUID) authentication.getPrincipal();
     }
-
 }

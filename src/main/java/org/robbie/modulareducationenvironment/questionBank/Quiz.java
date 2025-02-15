@@ -57,7 +57,7 @@ public class Quiz {
         UUID studentQuizID = UUID.randomUUID();
         List<studentQuestionAttempt> studentQuestionAttempts = questions.stream().map(question -> question.createStudentQuestionAttempt()).collect(Collectors.toList());
 
-        return new studentQuizAttempt(studentQuizID,this.quizUUID, this.quizVersionIdentifier, studentQuestionAttempts, studentUUID);
+        return new studentQuizAttempt(studentQuizID, this.quizUUID, this.quizVersionIdentifier, studentQuestionAttempts, studentUUID);
     }
 
     public BaseSetting getQuizSettings() {

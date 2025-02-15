@@ -28,7 +28,10 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             .authorizeHttpRequests(auth ->
 //                    auth.requestMatchers("/settings").hasRole("user") // Spring will check for "ROLE_EDUCATOR"
                     auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight OPTION
+                            .requestMatchers("/ws/app/startQuiz").authenticated()
+                            .requestMatchers("/ws/info", "/ws/**").permitAll()//permit all since some of the ws communication can only be done without auth token
                             .requestMatchers("/error").permitAll()
+                            .requestMatchers("/invoke/**", "/modules/**").permitAll()//This is for getting pages for quiz
                                     .anyRequest().authenticated())
             .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .anonymous(anonymous -> anonymous.disable()) // Disable anonymous authentication because its causing true jwt to get over ridden!!!

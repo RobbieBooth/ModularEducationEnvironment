@@ -1,5 +1,8 @@
 package org.robbie.modulareducationenvironment.eventHandler;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.robbie.modulareducationenvironment.QuizQuestion;
 import org.robbie.modulareducationenvironment.jwt.JwtAuthenticationFilter;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleLoader;
@@ -7,10 +10,12 @@ import org.robbie.modulareducationenvironment.questionBank.*;
 import org.robbie.modulareducationenvironment.userManagement.UserRepository;
 import org.robbie.modulareducationenvironment.userManagement.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
 import java.util.*;
@@ -26,13 +31,20 @@ public class EventController {
     @Autowired
     private UserRepository userRepository;
 
+    //JWT secret key
+    @Value("${app.jwt.verifier.key}")
+    private String SECRET;
+
     @MessageMapping("/send")
     @SendTo("/topic/event")
-    public ResponseEntity<studentQuizAttempt> sendMessage(EventDetails event) {
+    public ResponseEntity<studentQuizAttempt> sendMessage(EventDetails event, SimpMessageHeaderAccessor headerAccessor) {
+        // Access the token from the session attributes
+        String token = (String) headerAccessor.getSessionAttributes().get("token");
+
         //Get user who requested id
         UUID userUUID;
         try{
-            userUUID = JwtAuthenticationFilter.getUserUUID();
+            userUUID = getUUIDFromToken(token);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
@@ -83,11 +95,14 @@ public class EventController {
 
     @MessageMapping("/startQuiz")
     @SendTo("/topic/event")
-    public ResponseEntity<studentQuizAttempt> getQuizById(EventDetails event) {
+    public ResponseEntity<studentQuizAttempt> getQuizById(EventDetails event, SimpMessageHeaderAccessor headerAccessor) {
+        // Access the token from the session attributes
+        String token = (String) headerAccessor.getSessionAttributes().get("token");
+
         //Get user who requested id
         UUID userUUID;
         try{
-            userUUID = JwtAuthenticationFilter.getUserUUID();
+            userUUID = getUUIDFromToken(token);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
@@ -115,6 +130,14 @@ public class EventController {
         }
         //ERROR since its not right event or values
         return ResponseEntity.notFound().build();
+    }
+
+    public UUID getUUIDFromToken(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(SECRET);
+        DecodedJWT jwt = JWT.require(algorithm).build().verify(token);
+
+        String userUUID = jwt.getClaim("uuid").asString();
+        return UUID.fromString(userUUID);
     }
 }
 
