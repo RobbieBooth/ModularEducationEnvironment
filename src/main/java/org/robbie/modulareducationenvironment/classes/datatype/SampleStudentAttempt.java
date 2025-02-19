@@ -5,17 +5,17 @@ import java.util.UUID;
 
 public class SampleStudentAttempt {
 
-    private String studentAttemptId;
-    private String quizID;
-    private String versionID;
+    private UUID studentAttemptId;
+    private UUID quizID;
+    private UUID versionID;
     private UUID studentID;
-    private Optional<Integer> grade; // Optional
-    private Optional<Integer> maxGrade; // Optional
+    private Optional<Integer> grade = Optional.empty(); // Optional
+    private Optional<Integer> maxGrade = Optional.empty(); // Optional
 
     // Constructors
     public SampleStudentAttempt() {}
 
-    public SampleStudentAttempt(String studentAttemptId, String quizID, String versionID, UUID studentID, Optional<Integer> grade, Optional<Integer> maxGrade) {
+    public SampleStudentAttempt(UUID studentAttemptId, UUID quizID, UUID versionID, UUID studentID, Optional<Integer> grade, Optional<Integer> maxGrade) {
         this.studentAttemptId = studentAttemptId;
         this.quizID = quizID;
         this.versionID = versionID;
@@ -24,28 +24,27 @@ public class SampleStudentAttempt {
         this.maxGrade = maxGrade;
     }
 
-    // Getters and Setters
-    public String getStudentAttemptId() {
+    public UUID getStudentAttemptId() {
         return studentAttemptId;
     }
 
-    public void setStudentAttemptId(String studentAttemptId) {
+    public void setStudentAttemptId(UUID studentAttemptId) {
         this.studentAttemptId = studentAttemptId;
     }
 
-    public String getQuizID() {
+    public UUID getQuizID() {
         return quizID;
     }
 
-    public void setQuizID(String quizID) {
+    public void setQuizID(UUID quizID) {
         this.quizID = quizID;
     }
 
-    public String getVersionID() {
+    public UUID getVersionID() {
         return versionID;
     }
 
-    public void setVersionID(String versionID) {
+    public void setVersionID(UUID versionID) {
         this.versionID = versionID;
     }
 

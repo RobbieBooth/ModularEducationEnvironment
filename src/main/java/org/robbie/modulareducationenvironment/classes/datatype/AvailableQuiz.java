@@ -9,13 +9,13 @@ public class AvailableQuiz {
 
     private UUID id;
     private QuizInfo quizInfo;
-    private Optional<Long> startTime; // Unix time in milliseconds
-    private Optional<Long> endTime;   // Unix time in milliseconds
-    private Optional<List<UUID>> studentsAvailableTo; // Optional
+    private Optional<Long> startTime = Optional.empty(); // Unix time in milliseconds
+    private Optional<Long> endTime = Optional.empty();   // Unix time in milliseconds
+    private Optional<List<UUID>> studentsAvailableTo = Optional.empty(); // Optional
     private boolean useLatestVersion;
     private List<SampleStudentAttempt> studentAttempts;
     private boolean instantResult;
-    private Optional<Integer> maxAttemptCount; // null for infinite attempts
+    private Optional<Integer> maxAttemptCount = Optional.empty(); // null for infinite attempts
 
     // Constructors
     public AvailableQuiz() {}

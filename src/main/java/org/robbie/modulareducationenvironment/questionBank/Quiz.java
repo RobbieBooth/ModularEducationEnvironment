@@ -53,11 +53,12 @@ public class Quiz {
         return createdAt;
     }
 
-    public studentQuizAttempt createStudentQuizAttempt(UUID studentUUID) {
+    public studentQuizAttempt createStudentQuizAttempt(UUID studentUUID, UUID availableQuizUUID) {
         UUID studentQuizID = UUID.randomUUID();
         List<studentQuestionAttempt> studentQuestionAttempts = questions.stream().map(question -> question.createStudentQuestionAttempt()).collect(Collectors.toList());
 
-        return new studentQuizAttempt(studentQuizID, this.quizUUID, this.quizVersionIdentifier, studentQuestionAttempts, studentUUID);
+        //UUID studentQuizAttemptUUID, UUID classUUID, UUID availableQuizUUID, UUID quizTemplateUUID, UUID quizVersionRef, UUID userUUID, List<studentQuestionAttempt> questions
+        return new studentQuizAttempt(studentQuizID, this.classUUID, availableQuizUUID, this.quizUUID, this.quizVersionIdentifier, studentUUID, studentQuestionAttempts);
     }
 
     public BaseSetting getQuizSettings() {

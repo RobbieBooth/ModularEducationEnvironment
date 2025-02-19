@@ -17,7 +17,7 @@ public class QuizInfo {
     private String quizDescription;
     private Integer questionCount;
     private Date createdAt;
-    private Optional<UUID> versionID;//latest versionID for quizzes stored on class, else it is the version id for that particular quiz in availableQuizzes of which that version has been selected
+    private Optional<UUID> versionID = Optional.empty();//latest versionID for quizzes stored on class, else it is the version id for that particular quiz in availableQuizzes of which that version has been selected
 
 
     // Constructors

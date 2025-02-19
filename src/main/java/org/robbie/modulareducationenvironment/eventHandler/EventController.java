@@ -93,44 +93,44 @@ public class EventController {
         return ResponseEntity.ok(null);
     }
 
-    @MessageMapping("/startQuiz")
-    @SendTo("/topic/event")
-    public ResponseEntity<studentQuizAttempt> getQuizById(EventDetails event, SimpMessageHeaderAccessor headerAccessor) {
-        // Access the token from the session attributes
-        String token = (String) headerAccessor.getSessionAttributes().get("token");
-
-        //Get user who requested id
-        UUID userUUID;
-        try{
-            userUUID = getUUIDFromToken(token);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
-
-        GenericEvent genericEvent = event.getGenericEvent();
-        if(genericEvent instanceof QuizEvent) {
-            QuizEvent quizEvent = (QuizEvent) genericEvent;
-            if(quizEvent.getEvent().equals(QuizClientSideEvent.START_QUIZ)){
-                Optional<Quiz> quiz = quizRepository.findFirstByQuizUUIDOrderByCreatedAtDesc(event.getQuizUUID());
-                Optional<User> student = userRepository.findById(userUUID);
-                if(!quiz.isPresent() || !student.isPresent()) {
-                    return ResponseEntity.notFound().build();
-                }
-                studentQuizAttempt value = quizAttemptRepository.save(quiz.get().createStudentQuizAttempt(userUUID));
-//                student.get().addAttemptedQuiz(value.getStudentQuizAttemptUUID());//TODO fix here when adding attempts to class
-                return ResponseEntity.ok(value);
-            }
-            if(quizEvent.getEvent().equals(QuizClientSideEvent.OPEN_QUIZ)){
-                Optional<studentQuizAttempt> optionalQuizAttempt = quizAttemptRepository.findById(event.getQuizUUID());
-                if(!optionalQuizAttempt.isPresent()) {
-                    return ResponseEntity.notFound().build();
-                }
-                return ResponseEntity.ok(optionalQuizAttempt.get());
-            }
-        }
-        //ERROR since its not right event or values
-        return ResponseEntity.notFound().build();
-    }
+//    @MessageMapping("/startQuiz")
+//    @SendTo("/topic/event")
+//    public ResponseEntity<studentQuizAttempt> getQuizById(EventDetails event, SimpMessageHeaderAccessor headerAccessor) {
+//        // Access the token from the session attributes
+//        String token = (String) headerAccessor.getSessionAttributes().get("token");
+//
+//        //Get user who requested id
+//        UUID userUUID;
+//        try{
+//            userUUID = getUUIDFromToken(token);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+//        }
+//
+//        GenericEvent genericEvent = event.getGenericEvent();
+//        if(genericEvent instanceof QuizEvent) {
+//            QuizEvent quizEvent = (QuizEvent) genericEvent;
+//            if(quizEvent.getEvent().equals(QuizClientSideEvent.START_QUIZ)){
+//                Optional<Quiz> quiz = quizRepository.findFirstByQuizUUIDOrderByCreatedAtDesc(event.getQuizUUID());
+//                Optional<User> student = userRepository.findById(userUUID);
+//                if(!quiz.isPresent() || !student.isPresent()) {
+//                    return ResponseEntity.notFound().build();
+//                }
+//                studentQuizAttempt value = quizAttemptRepository.save(quiz.get().createStudentQuizAttempt(userUUID));
+////                student.get().addAttemptedQuiz(value.getStudentQuizAttemptUUID());//TODO fix here when adding attempts to class
+//                return ResponseEntity.ok(value);
+//            }
+//            if(quizEvent.getEvent().equals(QuizClientSideEvent.OPEN_QUIZ)){
+//                Optional<studentQuizAttempt> optionalQuizAttempt = quizAttemptRepository.findById(event.getQuizUUID());
+//                if(!optionalQuizAttempt.isPresent()) {
+//                    return ResponseEntity.notFound().build();
+//                }
+//                return ResponseEntity.ok(optionalQuizAttempt.get());
+//            }
+//        }
+//        //ERROR since its not right event or values
+//        return ResponseEntity.notFound().build();
+//    }
 
     public UUID getUUIDFromToken(String token) {
         Algorithm algorithm = Algorithm.HMAC256(SECRET);

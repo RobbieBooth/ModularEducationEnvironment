@@ -1,13 +1,11 @@
 package org.robbie.modulareducationenvironment.classes.datatype.contoller;
 
 import org.robbie.modulareducationenvironment.authentication.UserRoles;
-import org.robbie.modulareducationenvironment.classes.datatype.AvailableQuiz;
-import org.robbie.modulareducationenvironment.classes.datatype.EditClassRequest;
-import org.robbie.modulareducationenvironment.classes.datatype.QuizInfo;
+import org.robbie.modulareducationenvironment.classes.datatype.*;
+import org.robbie.modulareducationenvironment.classes.datatype.Class;
+import org.robbie.modulareducationenvironment.jwt.JwtAuthenticationFilter;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleConfig;
-import org.robbie.modulareducationenvironment.questionBank.Question;
-import org.robbie.modulareducationenvironment.questionBank.Quiz;
-import org.robbie.modulareducationenvironment.questionBank.QuizRepository;
+import org.robbie.modulareducationenvironment.questionBank.*;
 import org.robbie.modulareducationenvironment.settings.dataTypes.QuizSettings;
 import org.robbie.modulareducationenvironment.settings.dataTypes.Tuple;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.BaseSetting;
@@ -20,9 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.robbie.modulareducationenvironment.classes.datatype.Class;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 interface ClassRepository extends MongoRepository<Class, UUID> {
@@ -135,6 +133,66 @@ class ClassService {
         });
     }
 
+    /**
+     * Add `SampleStudentAttempt` to the classes availableQuiz, if the SampleStudentAttempt already exists it updates it. If the class does not exist or the available quiz then an error is thrown.
+     * @param classID The id of the class that contains the available quiz and of which the sample attempt will be added it
+     * @param availableQuizUUID The available quiz id which the student attempt will be added to. If it doesn't exist error is thrown.
+     * @param sampleStudentAttempt The student attempt to add to the availableQuiz
+     * @return the updated Class object
+     */
+    public Class updateClassWithStudentAttempt(UUID classID, UUID availableQuizUUID, SampleStudentAttempt sampleStudentAttempt) throws IllegalArgumentException{
+        return classRepository.findById(classID).map(existingClass -> {
+            // Add the new QuizInfo to the class
+            List<AvailableQuiz> quizzes = existingClass.getAvailableQuizzes();
+            if (quizzes == null) {
+                quizzes = new ArrayList<>();
+            }
+            boolean found = false;
+            for (int i = 0; i < quizzes.size(); i++) {
+                if (quizzes.get(i).getId().equals(availableQuizUUID)) {
+                    AvailableQuiz existingQuiz = quizzes.get(i);
+
+                    List<SampleStudentAttempt> studentAttempts = existingQuiz.getStudentAttempts();
+
+                    Optional<SampleStudentAttempt> optionalSampleStudentAttempt = findSampleStudentAttempt(sampleStudentAttempt.getStudentAttemptId(), studentAttempts);
+                    if(optionalSampleStudentAttempt.isPresent()) {
+                        SampleStudentAttempt existingSampleStudentAttempt = optionalSampleStudentAttempt.get();
+                        int index = studentAttempts.indexOf(existingSampleStudentAttempt);
+                        studentAttempts.set(index, sampleStudentAttempt); // Replace the old attempt with the new one
+                    }else{
+                        studentAttempts.add(sampleStudentAttempt);
+                    }
+
+                    existingQuiz.setStudentAttempts(studentAttempts);
+                    quizzes.set(i, existingQuiz); // Replace the existing quiz
+                    found = true;
+                    break;
+                }
+            }
+
+            if(!found) {
+                throw new IllegalArgumentException("Available Quiz with id " + availableQuizUUID + " not found.");
+            }
+
+            existingClass.setAvailableQuizzes(quizzes);
+
+            // Save the updated class
+            return classRepository.save(existingClass);
+        }).orElseThrow(() -> {
+            // If the class does not exist, throw an exception
+            throw new IllegalArgumentException("Class with ID " + classID + " does not exist.");
+        });
+    }
+
+    /**
+     * Looks for the attempt of sampleAttemptID and if it is not found it returns an empty.
+     * @param sampleAttemptID
+     * @param allAttempts
+     * @return
+     */
+    public Optional<SampleStudentAttempt> findSampleStudentAttempt(UUID sampleAttemptID, List<SampleStudentAttempt> allAttempts) {
+        return allAttempts.stream().filter(sampleStudentAttempt -> sampleStudentAttempt.getStudentAttemptId().equals(sampleAttemptID)).findFirst();
+    }
 
     public Optional<Class> getClassById(UUID id) {
         return classRepository.findById(id);
@@ -290,6 +348,10 @@ class ClassController {
 
     @Autowired
     private QuizRepository quizRepository;
+
+    @Autowired
+    private QuizAttemptRepository quizAttemptRepository;
+
     @Autowired
     private ModuleConfig moduleConfig;
 
@@ -349,9 +411,194 @@ class ClassController {
         return ResponseEntity.ok(getQuizSettings(newQuiz));
     }
 
+    //Get class
+    //check student is on the class
+    //check that available quiz is on that class
+    //check that student has not made more than the max amount of attempts at quiz
+    //create student attempt, add it to the class and return the attempt id
+    @PostMapping("/{classID}/quiz/available/start/{availableQuizUUID}")
+    public ResponseEntity<?> startAvailableQuiz(@PathVariable UUID classID, @PathVariable UUID availableQuizUUID) {
+        //Get requesting users id
+        UUID userUUID;
+        try{
+            userUUID = JwtAuthenticationFilter.getUserUUID();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+
+        //Get class
+        Optional<Class> optionalClass = classService.getClassById(classID);
+        if(optionalClass.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error: Class with id " + classID.toString() + " not found.");
+        }
+        Class currentClass = optionalClass.get();
+
+        //check that user has valid permissions ie they are an educator or a student who owns the quiz
+        List<UUID> educators = currentClass.getEducators();
+        List<UUID> students = currentClass.getStudents();
+        //get users role
+        UserRoles userRole = null;
+        if (educators.contains(userUUID)){
+            userRole = UserRoles.EDUCATOR;
+        }else if (students.contains(userUUID)){
+            userRole = UserRoles.STUDENT;
+        }else{
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: User does not belong to class");
+        }
+
+
+        //get the attempt and return it.
+        List<AvailableQuiz> availableQuizzes = currentClass.getAvailableQuizzes().stream().filter(availableQuiz -> availableQuiz.getId().equals(availableQuizUUID)).collect(Collectors.toList());
+        if(availableQuizzes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: No available quiz with id "+availableQuizUUID+" found.");
+        }
+        AvailableQuiz availableQuiz = availableQuizzes.get(0);
+
+        //TODO add in check for expire time and start time
+        Optional<Integer> optionalMaxAttempts = availableQuiz.getMaxAttemptCount();
+        //If empty option then we can return quiz to student infinite times otherwise it would be the max attempt count
+        if(optionalMaxAttempts.isPresent()){
+            Integer maxAttempts = optionalMaxAttempts.get();
+            long studentAttemptCount = availableQuiz.getStudentAttempts().stream().filter(sampleStudentAttempt -> sampleStudentAttempt.getStudentID().equals(userUUID)).count();
+            if(studentAttemptCount >= maxAttempts){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: Max attempts for quiz reached, "+ studentAttemptCount +"/"+ maxAttempts +" attempts made.");
+            }
+        }
+
+        //Get quiz to create student attempt
+        QuizInfo quizInfo = availableQuiz.getQuizInfo();
+        Optional<UUID> quizVersion = quizInfo.getVersionID();
+        //if quizVersion is specified we use it otherwise we use latest quiz version
+        Quiz quiz;
+        if(quizVersion.isPresent()){
+            quiz = quizRepository.findById(quizVersion.get()).orElse(null);
+            if(quiz == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Available quiz of id "+availableQuizUUID+" was found but its reliant quiz of version id "+quizVersion+"was not found.");
+            }
+        }else{
+            quiz = quizRepository.findFirstByQuizUUIDOrderByCreatedAtDesc(quizInfo.getQuizID()).orElse(null);
+            if(quiz == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: Available quiz of id "+availableQuizUUID+" was found but its reliant quiz of quiz id "+quizInfo.getQuizID()+"was not found.");
+            }
+        }
+
+        //create attempt and add it to class
+        studentQuizAttempt studentQuizAttempt = quiz.createStudentQuizAttempt(userUUID, availableQuizUUID);
+        quizAttemptRepository.save(studentQuizAttempt);
+
+        //Update class with the new attempt:
+        SampleStudentAttempt sampleStudentAttempt = new SampleStudentAttempt(
+                studentQuizAttempt.getStudentQuizAttemptUUID(),
+                studentQuizAttempt.getQuizTemplateUUID(),
+                studentQuizAttempt.getQuizVersionRef(),
+                studentQuizAttempt.getUserUUID(),
+                Optional.empty(),
+                Optional.empty());
+        classService.updateClassWithStudentAttempt(classID, availableQuizUUID, sampleStudentAttempt);
+
+        //return
+        return ResponseEntity.ok(studentQuizAttempt);
+    }
+
+    @GetMapping("/{classID}/quiz/available/{availableQuizUUID}/{studentAttemptID}")
+    public ResponseEntity<?> getStudentQuizAttempt(@PathVariable UUID classID, @PathVariable UUID availableQuizUUID, @PathVariable UUID studentAttemptID) {
+        //Get requesting users id
+        UUID userUUID;
+        try{
+            userUUID = JwtAuthenticationFilter.getUserUUID();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+
+        //Get class
+        Optional<Class> optionalClass = classService.getClassById(classID);
+        if(optionalClass.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error: Class with id " + classID.toString() + " not found.");
+        }
+        Class currentClass = optionalClass.get();
+
+        //check that user has valid permissions ie they are an educator or a student who owns the quiz
+        List<UUID> educators = currentClass.getEducators();
+        List<UUID> students = currentClass.getStudents();
+        //get users role
+        UserRoles userRole = null;
+        if (educators.contains(userUUID)){
+            userRole = UserRoles.EDUCATOR;
+        }else if (students.contains(userUUID)){
+            userRole = UserRoles.STUDENT;
+        }else{
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: User does not belong to class");
+        }
+
+
+        //get the attempt and return it.
+        List<AvailableQuiz> availableQuizzes = currentClass.getAvailableQuizzes().stream().filter(availableQuiz -> availableQuiz.getId().equals(availableQuizUUID)).collect(Collectors.toList());
+        if(availableQuizzes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: No available quiz with id "+availableQuizUUID+" found.");
+        }
+        AvailableQuiz availableQuiz = availableQuizzes.get(0);
+
+        //Get the sample student attempts
+        List<SampleStudentAttempt> studentQuizAttempts = availableQuiz.getStudentAttempts().stream().filter(sampleStudentAttempt -> sampleStudentAttempt.getStudentAttemptId().equals(studentAttemptID)).collect(Collectors.toList());
+        if(studentQuizAttempts.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: No student attempt with id "+studentAttemptID+" found.");
+        }
+        SampleStudentAttempt sampleStudentAttempt = studentQuizAttempts.get(0);
+        //check if it's a student that they own the quiz:
+        if(userRole.equals(UserRoles.STUDENT) && !sampleStudentAttempt.getStudentID().equals(userUUID)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: You do not own this attempt");
+        }
+
+        //get students attempt and return it
+        Optional<studentQuizAttempt> optionalStudentQuizAttempt = quizAttemptRepository.findById(sampleStudentAttempt.getStudentAttemptId());
+        if(optionalStudentQuizAttempt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: No student attempt with id "+studentAttemptID+" found in database.");
+        }
+        return ResponseEntity.ok(optionalStudentQuizAttempt.get());
+    }
+
+    @GetMapping("/{classID}/quiz/available/{availableQuizUUID}")
+    public ResponseEntity<?> getAvailableQuizSettings(@PathVariable UUID classID, @PathVariable UUID availableQuizUUID) {
+        //Get requesting users id
+        UUID userUUID;
+        try{
+            userUUID = JwtAuthenticationFilter.getUserUUID();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+
+        //Get class
+        Optional<Class> optionalClass = classService.getClassById(classID);
+        if(optionalClass.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error: Class with id " + classID.toString() + " not found.");
+        }
+        Class currentClass = optionalClass.get();
+
+        //check that user has valid permissions
+        List<UUID> educators = currentClass.getEducators();
+        List<UUID> students = currentClass.getStudents();
+
+        //User does not exist on class
+        if(!educators.contains(userUUID) && !students.contains(userUUID)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: User does not belong to class");
+        }
+
+        //check that available quiz is on that class
+        List<AvailableQuiz> availableQuizzes = currentClass.getAvailableQuizzes().stream().filter(availableQuiz -> availableQuiz.getId().equals(availableQuizUUID)).collect(Collectors.toList());
+        if(availableQuizzes.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: No available quiz with id "+availableQuizUUID+" found.");
+        }
+
+        //get available quiz and return it
+        AvailableQuiz availableQuiz = availableQuizzes.get(0);
+        return ResponseEntity.ok(availableQuiz);
+    }
+
     @PostMapping("/{classID}/quiz/available/save")
     public ResponseEntity<?> makeQuizAvailable(@PathVariable UUID classID, @RequestBody QuizAvailabilityRequest request) {
-
         //Get quizInfo
         QuizInfo quizInfo;
         if(request.getUseLatestVersion()){
