@@ -53,7 +53,7 @@ public class ModuleLoader {
     }
 
     public static QuizQuestion getQuizQuestion(String moduleName) throws Exception {
-        String fullClassName = ModularEducationEnvironmentApplication.environmentPath + ".modules." + moduleName + ".factory.QuestionEventHandler";
+        String fullClassName = ModularEducationEnvironmentApplication.environmentPath + ".modules." + moduleName + ".QuestionEventHandler";
 
         // Load the class dynamically
         Class<?> clazz = Class.forName(fullClassName);

@@ -79,6 +79,14 @@ public class EventDirector {
                 });
             }
             case SUBMIT_QUIZ -> {
+                //Get question that we are on
+                //save it and call event on others - close it then...
+                QuizQuestion currentQuestion = questionList.get(eventDetails.getQuestionUUID());
+                QuestionState currentQuestionState = quizState.getQuestionStateMap().get(eventDetails.getQuestionUUID());//TODO might be null
+                callSaveQuestionEvent(currentQuestion, currentQuestionState, questionList);
+
+                callCloseQuestionEvent(currentQuestion, currentQuestionState, questionList);
+
                 //call save on quiz
                 //then call submit on quiz
                 questionList.values().forEach(quizQuestion -> {
