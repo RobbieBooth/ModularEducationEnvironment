@@ -61,6 +61,10 @@ public class studentQuizAttempt{
         return questions;
     }
 
+    public void setQuestions(List<studentQuestionAttempt> questions) {
+        this.questions = questions;
+    }
+
     public Optional<studentQuestionAttempt> getQuestion(UUID questionUUID) {
         return questions.stream()
                 .filter(question -> question.getStudentQuestionAttemptUUID().equals(questionUUID)) // Filter based on UUID

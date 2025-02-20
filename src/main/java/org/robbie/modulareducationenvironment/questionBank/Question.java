@@ -3,6 +3,8 @@ package org.robbie.modulareducationenvironment.questionBank;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.BaseSetting;
 import org.springframework.data.annotation.Id;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class Question {
@@ -29,7 +31,7 @@ public class Question {
 
     public studentQuestionAttempt createStudentQuestionAttempt() {
         UUID studentQuestionID = UUID.randomUUID();
-        return new studentQuestionAttempt(studentQuestionID, this.questionTemplateUUID, this.moduleName);
+        return new studentQuestionAttempt(studentQuestionID, this.questionTemplateUUID, this.moduleName, new HashMap<String, Object>());
     }
 
     public Question() {
