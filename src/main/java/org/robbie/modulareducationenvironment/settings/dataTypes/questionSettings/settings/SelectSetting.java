@@ -3,10 +3,11 @@ package org.robbie.modulareducationenvironment.settings.dataTypes.questionSettin
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.ValueHolder;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.SettingType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SelectSetting extends BaseSetting {
-    private List<String> value;  // Use List instead of array for flexible storage in MongoDB
+    private List<String> value = new ArrayList<>();  // Use List instead of array for flexible storage in MongoDB
     private List<String> availableValues;
     private boolean multiSelect;
 
@@ -23,6 +24,9 @@ public class SelectSetting extends BaseSetting {
 
     @Override
     public ValueHolder getValueHolder() {
+        if(value == null){
+            value = new ArrayList<>();
+        }
         return new ValueHolder(value, this.getType());
     }
 

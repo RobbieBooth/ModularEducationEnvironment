@@ -3,7 +3,7 @@ modules:
     globalSettings:
       questionType: "Multiple Choice"
       difficulty: "Medium"
-  - name: ModuleB
+  - name: BasicQuestion
     globalSettings:
       questionType: "True/False"
       difficulty: "Easy"

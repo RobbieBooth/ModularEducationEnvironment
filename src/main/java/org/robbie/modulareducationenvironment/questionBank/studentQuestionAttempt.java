@@ -9,18 +9,18 @@ public class studentQuestionAttempt extends Question{
     @Id
     private UUID studentQuestionAttemptUUID;
     private boolean flagged = true;
+    private Map<String, Object> settings;
     private Map<String, Object> additionalData;
 //    private UUID questionTemplateUUID;
 //    private String moduleName;
 
     // Constructors
-    public studentQuestionAttempt(UUID studentQuestionAttemptUUID, UUID questionTemplateUUID, String moduleName, Map<String, Object> additionalData) {
+    public studentQuestionAttempt(UUID studentQuestionAttemptUUID, UUID questionTemplateUUID, String moduleName, Map<String, Object> additionalData, Map<String, Object> settings) {
         super(moduleName, questionTemplateUUID);
         this.studentQuestionAttemptUUID = studentQuestionAttemptUUID;
         this.additionalData = additionalData;
+        this.settings = settings;
     }
-
-
 
     public UUID getStudentQuestionAttemptUUID() {
         return studentQuestionAttemptUUID;
@@ -40,5 +40,13 @@ public class studentQuestionAttempt extends Question{
 
     public void setAdditionalData(Map<String, Object> additionalData) {
         this.additionalData = additionalData;
+    }
+
+    public Map<String, Object> getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Map<String, Object> settings) {
+        this.settings = settings;
     }
 }

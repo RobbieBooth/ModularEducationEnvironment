@@ -99,7 +99,7 @@ public class QuizInfo {
     public static QuizInfo createQuizInfo(Quiz quiz) {
         BaseSetting quizBaseSettings = quiz.getQuizSettings();
         ValueHolder quizGroupHolder = quizBaseSettings.getValueHolder();
-        if(quizGroupHolder.type != SettingType.Group){
+        if(quizGroupHolder.getType() != SettingType.Group){
             throw new IllegalArgumentException("Quiz group setting is not of type Group");
         }
         Map<String, ValueHolder> valueHolderMap = (Map<String, ValueHolder>) quizGroupHolder.getValue();

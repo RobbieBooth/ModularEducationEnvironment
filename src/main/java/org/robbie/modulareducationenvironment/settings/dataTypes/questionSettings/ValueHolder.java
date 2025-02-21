@@ -3,8 +3,8 @@ package org.robbie.modulareducationenvironment.settings.dataTypes.questionSettin
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.SettingType;
 
 public class ValueHolder{
-    public Object value;
-    public SettingType type;
+    private Object value;
+    private SettingType type;
 
     public ValueHolder(Object value, SettingType type) {
         this.value = value;

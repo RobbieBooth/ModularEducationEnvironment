@@ -50,4 +50,9 @@ public class QuestionFactory extends AbstractQuestionFactory {
         }
 
     }
+
+    @Override
+    public Map<String, Object> createQuestionSettings(Map<String, String> globalSettings, BaseSetting baseSetting) {
+        return Map.of();
+    }
 }

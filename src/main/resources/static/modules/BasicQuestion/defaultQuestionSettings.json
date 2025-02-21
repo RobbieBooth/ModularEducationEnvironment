@@ -1,0 +1,308 @@
+{
+  "type": "ListSetting",
+  "label": null,
+  "required": true,
+  "disabled": false,
+  "allowAddition": true,
+  "allowRemoval": true,
+  "maxAmount": null,
+  "minAmount": 1,
+  "haveBorder": false,
+  "settingToAdd": {
+    "type": "ConditionalSelect",
+    "label": null,
+    "required": true,
+    "disabled": false,
+    "condition": {
+      "type": "Select",
+      "label": "Select Type",
+      "required": true,
+      "disabled": false,
+      "value": null,
+      "availableValues": [
+        "Multiple Choice",
+        "Fill in the Blank",
+        "True or False",
+        "Short Answer",
+        "Long Answer",
+        "Numerical"
+      ],
+      "multiSelect": false
+    },
+    "groups": {
+      "Multiple Choice": {
+        "type": "Group",
+        "label": null,
+        "tooltip": null,
+        "required": false,
+        "disabled": false,
+        "haveBorder": false,
+        "children": [
+          {
+            "type": "Input",
+            "label": "Question",
+            "tooltip": "The question that is being asked",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": "1"
+          },
+          {
+            "type": "Input",
+            "label": "Description",
+            "tooltip": "Optional description, leave blank to not display",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": null
+          },
+          {
+            "type": "ListSetting",
+            "label": "Options",
+            "tooltip": "Add as many options as you like and check the ones that are the answer",
+            "required": true,
+            "disabled": false,
+            "allowAddition": true,
+            "allowRemoval": true,
+            "maxAmount": null,
+            "minAmount": 1,
+            "settingToAdd":{
+              "type": "Group",
+              "label": "Option",
+              "required": true,
+              "disabled": false,
+              "children": [
+                {
+                  "type": "Input",
+                  "label": "Option Text",
+                  "required": true,
+                  "disabled": false,
+                  "value": "",
+                  "maxCharacters": null,
+                  "maxLines": "1"
+                },
+                {
+                  "type": "Toggle",
+                  "label": "Answer",
+                  "tooltip": "Check if this is one of the answers",
+                  "required": false,
+                  "disabled": false,
+                  "value": false,
+                  "display": "Checkbox"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "Fill in the Blank": {
+        "type": "Group",
+        "label": null,
+        "tooltip": null,
+        "required": false,
+        "disabled": false,
+        "haveBorder": false,
+        "children": [
+          {
+            "type": "Input",
+            "label": "Question",
+            "tooltip": "The question that is being asked",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": "1"
+          },
+          {
+            "type": "Input",
+            "label": "Description",
+            "tooltip": "Optional description, leave blank to not display",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": null
+          },
+          {
+            "type": "Description",
+            "label": "How fill in blank is formatted",
+            "tooltip": false,
+            "required": true,
+            "disabled": false,
+            "value": "This based on the moodle embedded answers. To input an option into the text do this without the quotations: \n `{1:MULTICHOICE:=California}` - where California is the answer. \nThis will bring up a multi choice box in its place with all of the options you have defined in the question.\n This is a very basic implementation, so only what was described above is implemented, however it is based on this website here:\n https://docs.moodle.org/405/en/Embedded_Answers_(Cloze)_question_type "
+          },
+          {
+            "type": "Input",
+            "label": "Question Text",
+            "tooltip": "Fill out with the paragraph etc with the options formatted as described above.",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": null
+          }
+        ]
+      },
+      "True or False": {
+        "type": "Group",
+        "label": null,
+        "tooltip": null,
+        "required": false,
+        "disabled": false,
+        "haveBorder": false,
+        "children": [
+          {
+            "type": "Input",
+            "label": "Question",
+            "tooltip": "The question that is being asked",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": "1"
+          },
+          {
+            "type": "Input",
+            "label": "Description",
+            "tooltip": "Optional description, leave blank to not display",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": null
+          },
+          {
+            "type": "Toggle",
+            "label": "Answer",
+            "tooltip": "The true or false answer. If switch on the answer is true, else false.",
+            "required": true,
+            "disabled": false,
+            "value": false,
+            "display": "Switch"
+          }
+        ]
+      },
+      "Short Answer": {
+        "type": "Group",
+        "label": null,
+        "tooltip": null,
+        "required": false,
+        "disabled": false,
+        "haveBorder": false,
+        "children": [
+          {
+            "type": "Input",
+            "label": "Question",
+            "tooltip": "The question that is being asked",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": "1"
+          },
+          {
+            "type": "Input",
+            "label": "Description",
+            "tooltip": "Optional description, leave blank to not display",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": null
+          },
+          {
+            "type": "Input",
+            "label": "Answer",
+            "tooltip": "The answer of which the students one gets compared to",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": 1
+          }
+        ]
+      },
+      "Long Answer": {
+        "type": "Group",
+        "label": null,
+        "tooltip": null,
+        "required": false,
+        "disabled": false,
+        "haveBorder": false,
+        "children": [
+          {
+            "type": "Input",
+            "label": "Question",
+            "tooltip": "The question that is being asked",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": "1"
+          },
+          {
+            "type": "Input",
+            "label": "Description",
+            "tooltip": "Optional description, leave blank to not display",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": null
+          },
+          {
+            "type": "Input",
+            "label": "Answer",
+            "tooltip": "The answer of which the students one gets compared to",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": null
+          }
+        ]
+      },
+      "Numerical": {
+        "type": "Group",
+        "label": null,
+        "tooltip": null,
+        "required": false,
+        "disabled": false,
+        "haveBorder": false,
+        "children": [
+          {
+            "type": "Input",
+            "label": "Question",
+            "tooltip": "The question that is being asked",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": "1"
+          },
+          {
+            "type": "Input",
+            "label": "Description",
+            "tooltip": "Optional description, leave blank to not display",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": null
+          },
+          {
+            "type": "Input",
+            "label": "Numerical Answer",
+            "required": true,
+            "disabled": false,
+            "value": "",
+            "maxCharacters": null,
+            "maxLines": "1"
+          }
+        ]
+      }
+    }
+  }
+}
