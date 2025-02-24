@@ -6,6 +6,7 @@ import org.robbie.modulareducationenvironment.settings.dataTypes.questionSetting
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class Numerical extends BasicQuestion {
     public static Map<String, Object> convertQuestionSettings(ValueHolder questionSettings) throws IllegalArgumentException {
@@ -13,6 +14,7 @@ public class Numerical extends BasicQuestion {
             throw new IllegalArgumentException("Numerical holder must be a group");
         }
         Map<String, Object> convertedSettings = new HashMap<>();
+        convertedSettings.put("type", "Numerical");
 
         Map<String, ValueHolder> allFillInSettings = (Map<String, ValueHolder>) questionSettings.getValue();
         Tuple<String, String> questionAndDescription = getQuestionAndDescription(allFillInSettings);
@@ -36,6 +38,8 @@ public class Numerical extends BasicQuestion {
                 throw new IllegalArgumentException("Invalid number format for numerical question: " + answer);
             }
         }
+
+        convertedSettings.put("id", UUID.randomUUID().toString());
 
         return convertedSettings;
     }

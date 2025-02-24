@@ -6,6 +6,7 @@ import org.robbie.modulareducationenvironment.settings.dataTypes.questionSetting
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class TrueOrFalse extends BasicQuestion{
     public static Map<String, Object> convertQuestionSettings(ValueHolder questionSettings) throws IllegalArgumentException {
@@ -13,6 +14,7 @@ public class TrueOrFalse extends BasicQuestion{
             throw new IllegalArgumentException("True or False holder must be a group");
         }
         Map<String, Object> convertedSettings = new HashMap<>();
+        convertedSettings.put("type", "TrueOrFalse");
 
         Map<String, ValueHolder> allFillInSettings = (Map<String, ValueHolder>) questionSettings.getValue();
         Tuple<String, String> questionAndDescription = getQuestionAndDescription(allFillInSettings);
@@ -24,6 +26,9 @@ public class TrueOrFalse extends BasicQuestion{
         }
         Boolean answer = (Boolean) allFillInSettings.get("Answer").getValue();
         convertedSettings.put("answer", answer);
+
+        convertedSettings.put("id", UUID.randomUUID().toString());
+
         return convertedSettings;
     }
 }

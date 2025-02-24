@@ -294,7 +294,7 @@
           },
           {
             "type": "Input",
-            "label": "Numerical Answer",
+            "label": "Answer",
             "required": true,
             "disabled": false,
             "value": "",

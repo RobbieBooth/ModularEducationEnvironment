@@ -3,16 +3,14 @@ package org.robbie.modulareducationenvironment.modules.BasicQuestion.controller.
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.ValueHolder;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.SettingType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MultipleChoice extends BasicQuestion {
 
     public static Map<String, Object> convertQuestionSettings(ValueHolder questionSettings) throws IllegalArgumentException {
         try{
             Map<String, Object> questionSettingMap = new HashMap<String, Object>();
+            questionSettingMap.put("type", "MultipleChoice");
             if(questionSettings.getType() != SettingType.Group){
                 throw new IllegalArgumentException("Multiple choice question settings should be of format group");
             }
@@ -36,6 +34,9 @@ public class MultipleChoice extends BasicQuestion {
                 allOptions.add(convertOptionSetting(fieldNameToValue));
             }
             questionSettingMap.put("options", allOptions);
+
+            questionSettingMap.put("id", UUID.randomUUID().toString());
+
             //Convert options
             return questionSettingMap;
         } catch (IllegalArgumentException e) {
@@ -65,7 +66,7 @@ public class MultipleChoice extends BasicQuestion {
         public OptionHolder() {
         }
 
-        public Boolean answer() {
+        public Boolean getAnswer() {
             return answer;
         }
 

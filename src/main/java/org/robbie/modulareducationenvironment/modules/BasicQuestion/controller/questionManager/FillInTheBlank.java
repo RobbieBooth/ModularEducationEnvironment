@@ -14,6 +14,7 @@ public class FillInTheBlank extends BasicQuestion {
             throw new IllegalArgumentException("Fill in blank holder must be a group");
         }
         Map<String, Object> convertedSettings = new HashMap<>();
+        convertedSettings.put("type", "FillInTheBlank");
 
         Map<String, ValueHolder> allFillInSettings = (Map<String, ValueHolder>) questionSettings.getValue();
         Tuple<String, String> questionAndDescription = getQuestionAndDescription(allFillInSettings);
@@ -29,6 +30,7 @@ public class FillInTheBlank extends BasicQuestion {
 
         convertedSettings.put("options", extractionResult.getOptions());
         convertedSettings.put("questionString", extractionResult.getCleanedString());
+        convertedSettings.put("id", UUID.randomUUID().toString());
         return convertedSettings;
     }
 
