@@ -3,26 +3,23 @@ package org.robbie.modulareducationenvironment.moduleHandler;
 import org.robbie.modulareducationenvironment.ModularEducationEnvironmentApplication;
 import org.robbie.modulareducationenvironment.QuestionState;
 import org.robbie.modulareducationenvironment.QuizQuestion;
+import org.robbie.modulareducationenvironment.SpringContext;
 import org.robbie.modulareducationenvironment.factory.AbstractQuestionFactory;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.BaseSetting;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Constructor;
 import java.util.Map;
 
-
+@Service
 public class ModuleLoader {
 
-//    public static Object invokeModuleMethod(String moduleName, String className, String methodName) throws Exception {
-//        // Build the fully qualified class name
-//        String fullClassName = ModularEducationEnvironmentApplication.environmentPath + ".modules." + moduleName + "." + className;
-//
-//        // Load the class dynamically
-//        Class<?> clazz = Class.forName(fullClassName);
-//
-//        // Instantiate the class
-//        AbstractQuestionFactory instance = (AbstractQuestionFactory) clazz.getDeclaredConstructor().newInstance();
-//
-//        return instance.createPage(new QuestionState());
-//    }
+    public static ApplicationContext getApplicationContext() {
+        return SpringContext.getApplicationContext();
+    }
 
     public static Object invokeFactory(String moduleName, QuestionState questionState) throws Exception {
         String fullClassName = ModularEducationEnvironmentApplication.environmentPath + ".modules." + moduleName + ".factory.QuestionFactory";
@@ -70,8 +67,13 @@ public class ModuleLoader {
         // Load the class dynamically
         Class<?> clazz = Class.forName(fullClassName);
 
-        // Instantiate the class
-        QuizQuestion instance = (QuizQuestion) clazz.getDeclaredConstructor().newInstance();
+        // Get the ModuleSaveService bean from Spring
+        ModuleSaveService moduleSaveService = getApplicationContext().getBean(ModuleSaveService.class);
+        ModuleMessagingService moduleMessagingService = getApplicationContext().getBean(ModuleMessagingService.class);
+
+        // Instantiate using the constructor that takes ModuleSaveService
+        Constructor<?> constructor = clazz.getDeclaredConstructor(ModuleSaveService.class, ModuleMessagingService.class);
+        QuizQuestion instance = (QuizQuestion) constructor.newInstance(moduleSaveService, moduleMessagingService);
 
         return instance;
     }

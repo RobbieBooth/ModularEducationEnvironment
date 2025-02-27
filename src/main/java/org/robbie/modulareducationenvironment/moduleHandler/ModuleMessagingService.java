@@ -1,5 +1,6 @@
 package org.robbie.modulareducationenvironment.moduleHandler;
 
+import org.robbie.modulareducationenvironment.questionBank.studentQuestionAttempt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class ModuleMessagingService {
      * @param quizAttemptUUID The quiz attempt that is being attempted
      * @param questionData The question data
      */
-    public void sendQuestionUpdate(UUID quizAttemptUUID, Map<String, Object> questionData) {
+    public void sendQuestionUpdate(UUID quizAttemptUUID, studentQuestionAttempt questionData) {
         String userDestination = "/quiz/" + quizAttemptUUID.toString() +"/event";
         messagingTemplate.convertAndSend(userDestination, questionData);
     }
