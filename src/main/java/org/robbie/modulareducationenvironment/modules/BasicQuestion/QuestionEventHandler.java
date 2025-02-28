@@ -6,6 +6,7 @@ import org.robbie.modulareducationenvironment.QuizState;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleMessagingService;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleSaveService;
 import org.robbie.modulareducationenvironment.questionBank.studentQuestionAttempt;
+import org.robbie.modulareducationenvironment.questionBank.studentQuizAttempt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -72,25 +73,38 @@ public class QuestionEventHandler implements QuizQuestion {
         Map<String, Object> additionalData = questionState.getAdditionalData();
         additionalData.put("isSubmitted", true);
 
-        moduleSaveService.saveQuestion(quizID, questionID, studentID, additionalData);
-
-        //Get the rest of the question data for sending to message service and add the latest additional data to it
-        studentQuestionAttempt questionUpdate = questionState.getQuestionDatabaseState();
-        questionUpdate.setAdditionalData(additionalData);
+        studentQuizAttempt quizUpdate = moduleSaveService.saveQuestion(quizID, questionID, studentID, additionalData);
+//        quizUpdate.getQuestion(questionID);
+//        //Get the rest of the question data for sending to message service and add the latest additional data to it
+//        studentQuestionAttempt questionUpdate = questionState.getQuestionDatabaseState();
+//        questionUpdate.setAdditionalData(additionalData);
 
         //send message
-        moduleMessagingService.sendQuestionUpdate(quizID, questionUpdate);
+        moduleMessagingService.sendQuestionUpdate(quizID, quizUpdate.getQuestion(questionID).orElse(null));
     }
 
     @Override
     public void onThisQuestionSave(QuestionState questionState) {
+        Map<String, Object> additionalData = questionState.getAdditionalData();
+        //Do not do save as question has been submitted already so there is nothing to save
+        if(additionalData.containsKey("isSubmitted") && additionalData.get("isSubmitted") instanceof Boolean && (Boolean) additionalData.get("isSubmitted")){
+            return;
+        }
+
         UUID quizID = questionState.getQuizDatabaseState().getStudentQuizAttemptUUID();
         UUID questionID = questionState.getQuestionDatabaseState().getStudentQuestionAttemptUUID();
         UUID studentID = questionState.getQuizDatabaseState().getUserUUID();
-        Map<String, Object> additionalData = questionState.getAdditionalData();
+
         additionalData.put("isSubmitted", false);
 
-        moduleSaveService.saveQuestion(quizID, questionID, studentID, additionalData);
+        studentQuizAttempt quizUpdate = moduleSaveService.saveQuestion(quizID, questionID, studentID, additionalData);
+//        quizUpdate.getQuestion(questionID);
+//        //Get the rest of the question data for sending to message service and add the latest additional data to it
+//        studentQuestionAttempt questionUpdate = questionState.getQuestionDatabaseState();
+//        questionUpdate.setAdditionalData(additionalData);
+
+        //send message
+        moduleMessagingService.sendQuestionUpdate(quizID, quizUpdate.getQuestion(questionID).orElse(null));
     }
 
     @Override

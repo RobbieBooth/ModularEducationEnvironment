@@ -60,7 +60,14 @@ public class Question {
             logger.error("Error creating modules settings: {}", e.getMessage());
         }
 
-        return new studentQuestionAttempt(studentQuestionID, this.questionTemplateUUID, this.moduleName, new HashMap<String, Object>(), questionSettings);
+        Map<String, Object> additionalData = new HashMap<>();
+        try{
+            additionalData = ModuleLoader.createQuestionAdditionalData(moduleName, globalSettings, questionSettings);
+        } catch (Exception e) {
+            logger.error("Error creating modules additionalData: {}", e.getMessage());
+        }
+
+        return new studentQuestionAttempt(studentQuestionID, this.questionTemplateUUID, this.moduleName, additionalData, questionSettings);
     }
 
     public Question() {

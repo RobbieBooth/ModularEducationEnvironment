@@ -78,6 +78,13 @@ public class QuestionFactory extends AbstractQuestionFactory {
         return settings;
     }
 
+    @Override
+    public Map<String, Object> createAdditionalData(Map<String, String> globalSettings, Map<String, Object> questionSettings) {
+        Map<String, Object> additionalData = new HashMap<>();
+        additionalData.put("isSubmitted", false);
+        return additionalData;
+    }
+
     //        "Multiple Choice",
     //        "Fill in the Blank",
     //        "True or False",

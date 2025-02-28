@@ -57,6 +57,18 @@ public class ModuleLoader {
         return instance.createQuestionSettings(globalSettings, questionSettings);
     }
 
+    public static Map<String, Object> createQuestionAdditionalData(String moduleName, Map<String, String> globalSettings, Map<String, Object> questionSettings) throws Exception {
+        String fullClassName = ModularEducationEnvironmentApplication.environmentPath + ".modules." + moduleName + ".factory.QuestionFactory";
+
+        // Load the class dynamically
+        Class<?> clazz = Class.forName(fullClassName);
+
+        // Instantiate the class
+        AbstractQuestionFactory instance = (AbstractQuestionFactory) clazz.getDeclaredConstructor().newInstance();
+
+        return instance.createAdditionalData(globalSettings, questionSettings);
+    }
+
     public static String getModuleResourcePath(String moduleName) {
         return "/modules/"+moduleName+"/";
     }

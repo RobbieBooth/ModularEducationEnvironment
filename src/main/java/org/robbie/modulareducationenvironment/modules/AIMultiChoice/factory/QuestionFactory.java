@@ -55,4 +55,9 @@ public class QuestionFactory extends AbstractQuestionFactory {
     public Map<String, Object> createQuestionSettings(Map<String, String> globalSettings, BaseSetting baseSetting) {
         return Map.of();
     }
+
+    @Override
+    public Map<String, Object> createAdditionalData(Map<String, String> globalSettings, Map<String, Object> questionSettings) {
+        return Map.of();
+    }
 }

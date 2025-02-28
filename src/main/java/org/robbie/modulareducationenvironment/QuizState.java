@@ -29,7 +29,14 @@ public class QuizState {
         this.questionStateMap = quizDatabaseState.getQuestions().stream()
                 .collect(Collectors.toMap(
                         questionAttempt -> questionAttempt.getStudentQuestionAttemptUUID(), // Key: use an identifier from questionAttempt
-                        questionAttempt -> new QuestionState(quizDatabaseState, questionAttempt, additionalData), // Value: create a QuestionState
+                        questionAttempt -> {
+                            //Get the question additional data, from quiz additionalData
+                            Object data = additionalData.get(questionAttempt.getStudentQuestionAttemptUUID().toString());
+                            // Ensure it's a Map, otherwise use an empty HashMap as default
+                            Map<String, Object> questionData = (data instanceof Map) ? (Map<String, Object>) data : new HashMap<>();
+
+                            return new QuestionState(quizDatabaseState, questionAttempt, questionData);
+                        }, // Value: create a QuestionState
                         (existing, replacement) -> existing,// wont happen but is needed for next line
                         LinkedHashMap::new // Specify LinkedHashMap to preserve insertion order
                 ));
