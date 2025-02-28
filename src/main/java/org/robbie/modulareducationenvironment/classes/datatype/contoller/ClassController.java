@@ -391,8 +391,8 @@ class ClassController {
             questions.add(new Question(value.getFirst(), key, value.getSecond()));
         });
 
-        settings.getNewQuestions().forEach(value -> {
-            questions.add(new Question(value.getFirst(), UUID.randomUUID(), value.getSecond()));
+        settings.getNewQuestions().forEach((key, value) -> {
+            questions.add(new Question(value.getFirst(), key, value.getSecond()));
         });
 
         Quiz newQuiz = quizRepository.save(new Quiz(newVersionID, settings.getQuizUUID(), classID, questions, settings.getQuizSetting()));
@@ -689,7 +689,7 @@ class ClassController {
                 quiz.getQuizSettings(),
                 moduleConfig.getDefaultModuleSettingMap(),
                 questionSettings,
-                new ArrayList<>()
+                new HashMap<>()
         );
         return quizSettings;
     }

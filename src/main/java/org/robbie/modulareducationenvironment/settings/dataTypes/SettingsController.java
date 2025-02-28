@@ -80,7 +80,7 @@ public class SettingsController {
                 quiz.getQuizSettings(),
                 moduleConfig.getDefaultModuleSettingMap(),
                 questionSettings,
-                new ArrayList<>()
+                new HashMap<>()
         );
         return quizSettings;
     }
