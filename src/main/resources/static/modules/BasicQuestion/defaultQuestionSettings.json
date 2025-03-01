@@ -127,7 +127,8 @@
           },
           {
             "type": "Description",
-            "label": "How fill in blank is formatted",
+            "title": "How fill in blank is formatted:",
+            "label": "How fill in blank is formatted:",
             "tooltip": false,
             "required": true,
             "disabled": false,

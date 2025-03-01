@@ -1,28 +1,89 @@
 {
   "type": "Group",
-  "label": "Appearance Settings",
-  "tooltip": "Adjust appearance-related settings",
-  "required": false,
+  "label": null,
+  "tooltip": null,
+  "required": true,
   "disabled": false,
+  "haveBorder": false,
   "children": [
     {
-      "type": "Select",
-      "label": "Theme",
-      "tooltip": "Select a theme",
-      "required": false,
+      "type": "Description",
+      "title": "How question linking works:",
+      "label": "How question linking works:",
+      "tooltip": false,
+      "required": true,
       "disabled": false,
-      "value": ["Dark"],
-      "availableValues": ["Light", "Dark", "System"],
+      "value": "This will be the ID which is displayed above the question which you would like to, when submitted, generate questions on. WARNING: since this is an early development of the application only the basic question module has been implimented and therefore it will take the first answer on that question specified. IE: if you have multiple questions on that question it will only take the answer to the first one to be generated - it should be some sort of text box."
+    },
+    {
+      "type": "Input",
+      "label": "Linked Question ID",
+      "tooltip": "This will be the ID which is displayed above the question which you would like to, when submitted, generate questions on. WARNING: since this is an early development of the application only the basic question module has been implimented and therefore it will take the first answer on that question specified. IE: if you have multiple questions on that question it will only take the answer to the first one to be generated - it should be some sort of text box.",
+      "required": true,
+      "disabled": false,
+      "value": "",
+      "maxCharacters": null,
+      "maxLines": "1"
+    },
+    {
+      "type": "Input",
+      "label": "Number of Questions",
+      "tooltip": "Enter the number of questions that you would like the AI to generate",
+      "required": true,
+      "disabled": false,
+      "value": "",
+      "maxCharacters": null,
+      "maxLines": "1"
+    },
+    {
+      "type": "Select",
+      "label": "Question Type",
+      "tooltip": "Select the type of questions to be generated",
+      "required": true,
+      "disabled": false,
+      "value": null,
+      "availableValues": ["Multiple Choice", "Fill in the Blank"],
       "multiSelect": false
     },
     {
-      "type": "Toggle",
-      "label": "Enable Animations",
-      "tooltip": "Toggle animations on or off",
-      "required": false,
+      "type": "Input",
+      "label": "Topics Assessed",
+      "tooltip": "List the topics you would like the AI to generate on",
+      "required": true,
       "disabled": false,
-      "value": true,
-      "display": "Switch"
+      "value": "",
+      "maxCharacters": null,
+      "maxLines": null
+    },
+    {
+      "type": "Input",
+      "label": "Code Language",
+      "tooltip": "Select the programming language which the code that should be submitted will be",
+      "required": true,
+      "disabled": false,
+      "value": "",
+      "maxCharacters": null,
+      "maxLines": "1"
+    },
+    {
+      "type": "Input",
+      "label": "Code Context",
+      "tooltip": "The context of what the task the student was asked to do. This can better help tailor question generation.",
+      "required": true,
+      "disabled": false,
+      "value": "",
+      "maxCharacters": null,
+      "maxLines": null
+    },
+    {
+      "type": "Input",
+      "label": "Code Template",
+      "tooltip": "The code which was used given by the students for the task. Leave blank if all the code is the students. This allows for the AI to not ask questions about things the student didnt write.",
+      "required": true,
+      "disabled": false,
+      "value": "",
+      "maxCharacters": null,
+      "maxLines": null
     }
   ]
 }
