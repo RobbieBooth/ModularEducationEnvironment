@@ -142,6 +142,7 @@ public class QuestionFactory extends AbstractQuestionFactory {
         settings.put("codeLanguage", codeLanguage);
         settings.put("codeContext", codeContext);
         settings.put("codeTemplate", codeTemplate);
+        settings.put("questions", new ArrayList<>());
 
         return settings;
     }

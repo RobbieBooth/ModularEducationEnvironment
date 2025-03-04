@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.robbie.modulareducationenvironment.QuizQuestion;
 import org.robbie.modulareducationenvironment.jwt.JwtAuthenticationFilter;
+import org.robbie.modulareducationenvironment.moduleHandler.ModuleConfig;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleLoader;
 import org.robbie.modulareducationenvironment.questionBank.*;
 import org.robbie.modulareducationenvironment.userManagement.UserRepository;
@@ -30,6 +31,8 @@ public class EventController {
     private QuizRepository quizRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ModuleConfig moduleConfig;
 
     //JWT secret key
     @Value("${app.jwt.verifier.key}")
@@ -77,7 +80,7 @@ public class EventController {
                     (existing, replacement) -> existing,// wont happen but is needed for next line
                     LinkedHashMap::new // Specify LinkedHashMap to preserve insertion order
             ));
-            EventDirector.directEvent(event, studentQuizAttempt, quizQuestionMap);
+            EventDirector.directEvent(event, studentQuizAttempt, quizQuestionMap, moduleConfig.getModules());
 
 
 //            List<QuizQuestion> allQuizQuestions = questions.stream().map(question -> {

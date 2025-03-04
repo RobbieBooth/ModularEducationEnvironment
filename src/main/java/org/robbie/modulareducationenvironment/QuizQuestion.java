@@ -71,7 +71,7 @@ public interface QuizQuestion {
      * potential overlaps.
      * @param questionState the state of the question that has been started
      */
-    public void onQuestionStart(QuestionState questionState);
+    public void onQuestionStart(OtherQuestionState questionState);
 
     /**
      * Invoked on all questions within the quiz, when a question is
@@ -82,7 +82,7 @@ public interface QuizQuestion {
      * potential overlaps.
      * @param questionState the state of the question that has been resumed
      */
-    public void onQuestionResume(QuestionState questionState);
+    public void onQuestionResume(OtherQuestionState questionState);
 
     /**
      * Invoked on all questions within the quiz, when a question
@@ -93,7 +93,7 @@ public interface QuizQuestion {
      * potential overlaps.
      * @param questionState the state of the question that has been closed
      */
-    public void onQuestionClose(QuestionState questionState);
+    public void onQuestionClose(OtherQuestionState questionState);
 
     /**
      * Invoked on all questions within the quiz, when a question is
@@ -104,7 +104,7 @@ public interface QuizQuestion {
      * potential overlaps.
      * @param questionState the state of the question that has been submitted
      */
-    public void onQuestionSubmit(QuestionState questionState);
+    public void onQuestionSubmit(OtherQuestionState questionState);
 
     /**
      * Invoked on all questions within the quiz, when a question is
@@ -115,5 +115,5 @@ public interface QuizQuestion {
      * potential overlaps.
      * @param questionState the state of the question that has been saved
      */
-    public void onQuestionSave(QuestionState questionState);
+    public void onQuestionSave(OtherQuestionState questionState);
 }

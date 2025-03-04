@@ -1,5 +1,6 @@
 package org.robbie.modulareducationenvironment.modules.BasicQuestion;
 
+import org.robbie.modulareducationenvironment.OtherQuestionState;
 import org.robbie.modulareducationenvironment.QuestionState;
 import org.robbie.modulareducationenvironment.QuizQuestion;
 import org.robbie.modulareducationenvironment.QuizState;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.UUID;
 
-@Component
+@Component("basicQuestionEventHandler")
 public class QuestionEventHandler implements QuizQuestion {
 
     private final ModuleSaveService moduleSaveService;
@@ -73,7 +74,7 @@ public class QuestionEventHandler implements QuizQuestion {
         Map<String, Object> additionalData = questionState.getAdditionalData();
         additionalData.put("isSubmitted", true);
 
-        studentQuizAttempt quizUpdate = moduleSaveService.saveQuestion(quizID, questionID, studentID, additionalData);
+        studentQuizAttempt quizUpdate = moduleSaveService.saveQuestionAdditionalData(quizID, questionID, studentID, additionalData);
 //        quizUpdate.getQuestion(questionID);
 //        //Get the rest of the question data for sending to message service and add the latest additional data to it
 //        studentQuestionAttempt questionUpdate = questionState.getQuestionDatabaseState();
@@ -97,7 +98,7 @@ public class QuestionEventHandler implements QuizQuestion {
 
         additionalData.put("isSubmitted", false);
 
-        studentQuizAttempt quizUpdate = moduleSaveService.saveQuestion(quizID, questionID, studentID, additionalData);
+        studentQuizAttempt quizUpdate = moduleSaveService.saveQuestionAdditionalData(quizID, questionID, studentID, additionalData);
 //        quizUpdate.getQuestion(questionID);
 //        //Get the rest of the question data for sending to message service and add the latest additional data to it
 //        studentQuestionAttempt questionUpdate = questionState.getQuestionDatabaseState();
@@ -108,27 +109,27 @@ public class QuestionEventHandler implements QuizQuestion {
     }
 
     @Override
-    public void onQuestionStart(QuestionState questionState) {
+    public void onQuestionStart(OtherQuestionState questionState) {
 
     }
 
     @Override
-    public void onQuestionResume(QuestionState questionState) {
+    public void onQuestionResume(OtherQuestionState questionState) {
 
     }
 
     @Override
-    public void onQuestionClose(QuestionState questionState) {
+    public void onQuestionClose(OtherQuestionState questionState) {
 
     }
 
     @Override
-    public void onQuestionSubmit(QuestionState questionState) {
+    public void onQuestionSubmit(OtherQuestionState questionState) {
 
     }
 
     @Override
-    public void onQuestionSave(QuestionState questionState) {
+    public void onQuestionSave(OtherQuestionState questionState) {
 
     }
 }
