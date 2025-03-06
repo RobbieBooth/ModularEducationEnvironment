@@ -88,4 +88,10 @@ public class Class {
     public void setAvailableQuizzes(List<AvailableQuiz> availableQuizzes) {
         this.availableQuizzes = availableQuizzes;
     }
+
+    public boolean isUserInClass(UUID userId) {
+        return (educators != null && educators.contains(userId)) ||
+                (students != null && students.contains(userId));
+    }
+
 }

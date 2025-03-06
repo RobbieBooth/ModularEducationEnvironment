@@ -199,6 +199,18 @@ class ClassService {
     }
 
     /**
+     * Search all the classes to see if the user is in it and return the list of their classes
+     * @param userId
+     * @return
+     */
+    public List<Class> getClassesByUserId(UUID userId) {
+        return classRepository.findAll()
+                .stream()
+                .filter(classObj -> classObj.isUserInClass(userId))
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Updated the users and educators of the classes user records with the current updated version.
      * This could be removing them or adding the class to the users record or updating the name.
      * This is done to ensure that when a user gets their record they do not need to request each of their classes and can just request the record.
@@ -373,6 +385,22 @@ class ClassController {
         return ResponseEntity.notFound().build(); // Fallback in case something goes wrong
     }
 
+
+    /**
+     * Get the classes for that user
+     * @return
+     */
+    @GetMapping("/")
+    public ResponseEntity<?> getUsersClasses() {
+        //Get requesting users id
+        UUID userUUID;
+        try{
+            userUUID = JwtAuthenticationFilter.getUserUUID();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+        return ResponseEntity.ok(classService.getClassesByUserId(userUUID));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Class> getClassById(@PathVariable UUID id) {
