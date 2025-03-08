@@ -7,6 +7,7 @@ import org.robbie.modulareducationenvironment.QuizQuestion;
 import org.robbie.modulareducationenvironment.jwt.JwtAuthenticationFilter;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleConfig;
 import org.robbie.modulareducationenvironment.moduleHandler.ModuleLoader;
+import org.robbie.modulareducationenvironment.moduleHandler.ModuleMessagingService;
 import org.robbie.modulareducationenvironment.questionBank.*;
 import org.robbie.modulareducationenvironment.userManagement.UserRepository;
 import org.robbie.modulareducationenvironment.userManagement.User;
@@ -27,6 +28,8 @@ public class EventController {
 
     @Autowired
     private QuizAttemptRepository quizAttemptRepository;
+    @Autowired
+    private ModuleMessagingService moduleMessagingService;
     @Autowired
     private QuizRepository quizRepository;
     @Autowired
@@ -62,8 +65,11 @@ public class EventController {
                 QuestionEvent quizEvent = (QuestionEvent) event.getGenericEvent();
                 if(quizEvent.getEvent().equals(QuestionClientSideEvent.TOGGLE_FLAG)){
                     studentQuizAttempt.toggleFlagOnQuestion(event.getQuestionUUID());
+                    //Update the database
                     quizAttemptRepository.save(studentQuizAttempt);
-                    return ResponseEntity.ok(studentQuizAttempt);
+                    //Send update to the front end for the flagged question
+                    moduleMessagingService.sendQuestionUpdate(studentQuizAttempt.getStudentQuizAttemptUUID(), studentQuizAttempt.getQuestion(event.getQuestionUUID()).orElse(null));
+                    return ResponseEntity.ok(null);
                 }
             }
 
