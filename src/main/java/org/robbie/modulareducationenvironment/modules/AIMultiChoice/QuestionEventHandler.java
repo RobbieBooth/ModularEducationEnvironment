@@ -187,7 +187,7 @@ public class QuestionEventHandler implements QuizQuestion {
         Map<String, Object> additionalData = questionState.getQuestionDatabaseState().getAdditionalData();
         UUID questionID = questionState.getQuestionDatabaseState().getStudentQuestionAttemptUUID();
         Boolean hasBeenGenerated = (Boolean) additionalData.get("isGenerated");
-        if(hasBeenGenerated){
+        if(hasBeenGenerated != null && hasBeenGenerated){
             //The questions have been generated so no point regenerating
             logger.error("Tried to generate AI Questions when they have already been generated for question id: {}", questionID);
             return;
