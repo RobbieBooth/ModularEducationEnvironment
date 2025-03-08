@@ -136,7 +136,7 @@ public class GenerateQuestion {
             // Parse JSON as a tree structure
             JsonNode rootNode = objectMapper.readTree(json);
 
-            // Extract "questions" array from the root JSON object
+            // Extract questions array from the root JSON object
             JsonNode questionsNode = rootNode.get("questions");
 
             if (questionsNode != null && questionsNode.isArray()) {
