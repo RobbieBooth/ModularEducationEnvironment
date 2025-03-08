@@ -133,6 +133,25 @@ class ClassService {
         });
     }
 
+    public boolean removeAvailableQuiz(UUID classId, UUID availableQuizId) {
+        Optional<Class> optionalClass = classRepository.findById(classId);
+
+        if (optionalClass.isPresent()) {
+            Class classObj = optionalClass.get();
+
+            //Remove the AvailableQuiz with the given ID
+            boolean removed = classObj.getAvailableQuizzes().removeIf(quiz -> quiz.getId().equals(availableQuizId));
+
+            if (removed) {
+                //Save updated class
+                classRepository.save(classObj);
+                return true;
+            }
+        }
+        //Return false if class or quiz not found
+        return false;
+    }
+
     /**
      * Add `SampleStudentAttempt` to the classes availableQuiz, if the SampleStudentAttempt already exists it updates it. If the class does not exist or the available quiz then an error is thrown.
      * @param classID The id of the class that contains the available quiz and of which the sample attempt will be added it
@@ -527,6 +546,38 @@ class ClassController {
 
         //return
         return ResponseEntity.ok(studentQuizAttempt);
+    }
+
+    @DeleteMapping("/{classID}/quiz/available/{availableQuizUUID}")
+    public ResponseEntity<?> deleteAvailableQuiz(@PathVariable UUID classID, @PathVariable UUID availableQuizUUID) {
+        //Get requesting users id
+        UUID userUUID;
+        try{
+            userUUID = JwtAuthenticationFilter.getUserUUID();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+
+        //Get class
+        Optional<Class> optionalClass = classService.getClassById(classID);
+        if(optionalClass.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Error: Class with id " + classID.toString() + " not found.");
+        }
+        Class currentClass = optionalClass.get();
+
+        //check that user has valid permissions ie they are an educator
+        List<UUID> educators = currentClass.getEducators();
+        //get users role
+        UserRoles userRole = null;
+        if (educators.contains(userUUID)){
+            userRole = UserRoles.EDUCATOR;
+        }else{
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Error: Does not have sufficient permissions");
+        }
+
+        //remove the class
+        return ResponseEntity.ok(classService.removeAvailableQuiz(classID, availableQuizUUID));
     }
 
     @GetMapping("/{classID}/quiz/available/{availableQuizUUID}/{studentAttemptID}")
