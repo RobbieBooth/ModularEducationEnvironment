@@ -33,14 +33,8 @@ public class QuestionFactory extends AbstractQuestionFactory {
     public BaseSetting getDefaultQuestionSettings(Map<String, String> globalSettings) {
         try{
             System.out.println(ModuleLoader.getModuleResourcePath(MODULE_NAME) + "defaultQuestionSettings.json");
-//            URL path = getClass().getClassLoader().getResource(ModuleLoader.getModuleResourcePath("AIMultiChoice") + "defaultQuestionSettings.json");
-//            System.out.println(path.toString());
-//            File file = new File(path.getFile());
 
-            ClassPathResource resource = new ClassPathResource("static"+ModuleLoader.getModuleResourcePath("AIMultiChoice") + "defaultQuestionSettings.json");
-//            Path path = resource.getFile().toPath();
-//            String content = Files.readString(path);
-//            System.out.println(content);
+            ClassPathResource resource = new ClassPathResource("static"+ModuleLoader.getModuleResourcePath(MODULE_NAME) + "defaultQuestionSettings.json");
 
             return QuestionSettingReader.readSettingJson(resource.getFile());
         } catch (IOException e) {
@@ -53,7 +47,6 @@ public class QuestionFactory extends AbstractQuestionFactory {
                     e.getMessage()
             );
         }
-
     }
 
     @Override
