@@ -42,7 +42,7 @@
       "required": true,
       "disabled": false,
       "value": null,
-      "availableValues": ["Multiple Choice", "Fill in the Blank"],
+      "availableValues": ["Multiple Choice"],
       "multiSelect": false
     },
     {
