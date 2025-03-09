@@ -13,19 +13,28 @@ public class studentQuizAttempt{
 
     @Id
     private UUID studentQuizAttemptUUID;
+
+    private UUID classUUID;
+    private UUID availableQuizUUID;
+
     private UUID quizTemplateUUID;
     private UUID quizVersionRef;
     private Date createdAt; // Field for storing timestamp
-    private UUID studentUUID;
+    private UUID userUUID;
     private List<studentQuestionAttempt> questions;
 
-    public studentQuizAttempt(UUID studentQuizAttemptUUID, UUID quizTemplateUUID, UUID quizVersionRef, List<studentQuestionAttempt> questions, UUID studentUUID) {
+    public studentQuizAttempt(UUID studentQuizAttemptUUID, UUID classUUID, UUID availableQuizUUID, UUID quizTemplateUUID, UUID quizVersionRef, UUID userUUID, List<studentQuestionAttempt> questions) {
         this.studentQuizAttemptUUID = studentQuizAttemptUUID;
+        this.classUUID = classUUID;
+        this.availableQuizUUID = availableQuizUUID;
         this.quizTemplateUUID = quizTemplateUUID;
         this.quizVersionRef = quizVersionRef;
+        this.userUUID = userUUID;
         this.questions = questions;
-        this.studentUUID = studentUUID;
         this.createdAt = new Date();
+    }
+
+    public studentQuizAttempt() {
     }
 
     public UUID getStudentQuizAttemptUUID() {
@@ -44,12 +53,16 @@ public class studentQuizAttempt{
         return createdAt;
     }
 
-    public UUID getStudentUUID() {
-        return studentUUID;
+    public UUID getUserUUID() {
+        return userUUID;
     }
 
     public List<studentQuestionAttempt> getQuestions() {
         return questions;
+    }
+
+    public void setQuestions(List<studentQuestionAttempt> questions) {
+        this.questions = questions;
     }
 
     public Optional<studentQuestionAttempt> getQuestion(UUID questionUUID) {

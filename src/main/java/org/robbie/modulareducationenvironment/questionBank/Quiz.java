@@ -16,33 +16,23 @@ public class Quiz {
     @Id
     private UUID quizVersionIdentifier;
     private UUID quizUUID;
+    private UUID classUUID;
     private Date createdAt; // Field for storing timestamp
     private List<Question> questions;
     private BaseSetting quizSettings;
 
     // Constructors
-    public Quiz(UUID quizVersionIdentifier, UUID quizUUID, List<Question> questions) {
-        this.quizVersionIdentifier = quizVersionIdentifier;
-        this.quizUUID = quizUUID;
-        this.questions = questions;
-        this.createdAt = new Date();
-    }
 
-    public Quiz(UUID quizVersionIdentifier, UUID quizUUID, List<Question> questions, BaseSetting quizSettings) {
+
+    public Quiz(UUID quizVersionIdentifier, UUID quizUUID, UUID classUUID, List<Question> questions, BaseSetting quizSettings) {
         this.questions = questions;
         this.quizSettings = quizSettings;
+        this.classUUID = classUUID;
         this.createdAt = new Date();
         this.quizVersionIdentifier = quizVersionIdentifier;
         this.quizUUID = quizUUID;
     }
 
-    public Quiz(UUID quizVersionIdentifier, UUID quizUUID, Date createdAt, List<Question> questions, BaseSetting quizSettings) {
-        this.quizVersionIdentifier = quizVersionIdentifier;
-        this.quizUUID = quizUUID;
-        this.createdAt = createdAt;
-        this.questions = questions;
-        this.quizSettings = quizSettings;
-    }
 
     public Quiz() {
     }
@@ -63,11 +53,12 @@ public class Quiz {
         return createdAt;
     }
 
-    public studentQuizAttempt createStudentQuizAttempt(UUID studentUUID) {
+    public studentQuizAttempt createStudentQuizAttempt(UUID studentUUID, UUID availableQuizUUID) {
         UUID studentQuizID = UUID.randomUUID();
         List<studentQuestionAttempt> studentQuestionAttempts = questions.stream().map(question -> question.createStudentQuestionAttempt()).collect(Collectors.toList());
 
-        return new studentQuizAttempt(studentQuizID,this.quizUUID, this.quizVersionIdentifier, studentQuestionAttempts, studentUUID);
+        //UUID studentQuizAttemptUUID, UUID classUUID, UUID availableQuizUUID, UUID quizTemplateUUID, UUID quizVersionRef, UUID userUUID, List<studentQuestionAttempt> questions
+        return new studentQuizAttempt(studentQuizID, this.classUUID, availableQuizUUID, this.quizUUID, this.quizVersionIdentifier, studentUUID, studentQuestionAttempts);
     }
 
     public BaseSetting getQuizSettings() {

@@ -2,6 +2,7 @@ package org.robbie.modulareducationenvironment.settings.dataTypes.questionSettin
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.ValueHolder;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.SettingType;
 
 //Cast types
@@ -15,6 +16,8 @@ import org.robbie.modulareducationenvironment.settings.dataTypes.questionSetting
         @JsonSubTypes.Type(value = InputSetting.class, name = "Input"),
         @JsonSubTypes.Type(value = SelectSetting.class, name = "Select"),
         @JsonSubTypes.Type(value = FileInputSetting.class, name = "File"),
+        @JsonSubTypes.Type(value = DateSetting.class, name = "Date"),
+        @JsonSubTypes.Type(value = TagInputSetting.class, name = "TagInput"),
         @JsonSubTypes.Type(value = ErrorSetting.class, name = "Error"),
         @JsonSubTypes.Type(value = DescriptionSetting.class, name = "Description"),
         @JsonSubTypes.Type(value = GroupSetting.class, name = "Group"),
@@ -79,5 +82,8 @@ public abstract class BaseSetting {
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
     }
+
+    // Abstract method for getting value
+    public abstract ValueHolder getValueHolder();
 }
 

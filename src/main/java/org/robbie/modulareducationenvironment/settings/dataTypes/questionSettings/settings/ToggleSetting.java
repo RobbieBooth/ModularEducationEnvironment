@@ -1,5 +1,6 @@
 package org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings;
 
+import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.ValueHolder;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.SettingType;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.ToggleDisplayType;
 
@@ -16,6 +17,13 @@ public class ToggleSetting extends BaseSetting {
     public ToggleSetting() {
         super(SettingType.Toggle);
     }
+
+    @Override
+    public ValueHolder getValueHolder() {
+        return new ValueHolder(value, this.getType());
+    }
+
+
 
     // Getters and setters
     public boolean isValue() {

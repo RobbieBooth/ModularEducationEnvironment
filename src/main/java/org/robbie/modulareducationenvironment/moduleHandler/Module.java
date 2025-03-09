@@ -3,6 +3,7 @@ package org.robbie.modulareducationenvironment.moduleHandler;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.BaseSetting;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Module {
@@ -38,5 +39,12 @@ public class Module {
 
     public void setDefaultQuestionSettings(BaseSetting defaultQuestionSettings) {
         this.defaultQuestionSettings = defaultQuestionSettings;
+    }
+
+    public static Module findModuleByName(List<Module> modules, String moduleName) {
+        return modules.stream()
+                .filter(module -> module.getName().equals(moduleName))
+                .findFirst()
+                .orElse(null); // Returns null if not found
     }
 }

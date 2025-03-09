@@ -1,4 +1,4 @@
-package org.robbie.modulareducationenvironment;
+package org.robbie.modulareducationenvironment.websockets;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

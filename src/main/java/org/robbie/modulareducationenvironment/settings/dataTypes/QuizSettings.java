@@ -24,10 +24,10 @@ public class QuizSettings {
     private BaseSetting quizSetting;
     private Map<String, BaseSetting> defaultModuleSettings;
     private Map<UUID, Tuple<String, BaseSetting>> questions; // List of questions - we will break them down from the list version - uuids that are no longer there will be removed from iteration
-    private List<Tuple<String, BaseSetting>> newQuestions;// List of new questions that we will create
+    private Map<UUID, Tuple<String, BaseSetting>> newQuestions;// List of new questions that we will create
 
     // Constructors
-    public QuizSettings(UUID quizUUID, UUID currentVersionUUID, BaseSetting quizSetting, Map<String, BaseSetting> defaultModuleSettings, Map<UUID, Tuple<String, BaseSetting>> questions, List<Tuple<String, BaseSetting>> newQuestions) {
+    public QuizSettings(UUID quizUUID, UUID currentVersionUUID, BaseSetting quizSetting, Map<String, BaseSetting> defaultModuleSettings, Map<UUID, Tuple<String, BaseSetting>> questions, Map<UUID, Tuple<String, BaseSetting>> newQuestions) {
         this.quizUUID = quizUUID;
         this.currentVersionUUID = currentVersionUUID;
         this.quizSetting = quizSetting;
@@ -61,7 +61,7 @@ public class QuizSettings {
                 quizSettings,
                 defaultModuleSettings,
                 new HashMap<>(),
-                new ArrayList<>()
+                new HashMap<>()
         );
 
     }
@@ -86,7 +86,8 @@ public class QuizSettings {
         return questions;
     }
 
-    public List<Tuple<String, BaseSetting>> getNewQuestions() {
+
+    public Map<UUID, Tuple<String, BaseSetting>> getNewQuestions() {
         return newQuestions;
     }
 }

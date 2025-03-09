@@ -36,5 +36,17 @@ public class ModuleConfig {
         return map;
     }
 
+    /**
+     * Get a map of the module name to the Module
+     * @return map of the module name to the Module
+     */
+    public Map<String, Module> getModuleMap() {
+        Map<String, Module> map = new HashMap<>();
+        for (Module module : modules) {
+            map.put(module.getName(), module);
+        }
+        return map;
+    }
+
 }
 

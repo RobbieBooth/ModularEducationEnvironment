@@ -5,6 +5,7 @@ import org.robbie.modulareducationenvironment.settings.dataTypes.questionSetting
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings.GroupSetting;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -12,8 +13,10 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-@Configuration
+@Service
 public class ConfigLoader {
+
+//    private ModuleConfig moduleConfig;
 
     @Bean
     public ModuleConfig moduleConfig() {

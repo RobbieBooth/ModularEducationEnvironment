@@ -1,5 +1,6 @@
 package org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings;
 
+import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.ValueHolder;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.SettingType;
 
 public class InputSetting extends BaseSetting {
@@ -18,13 +19,20 @@ public class InputSetting extends BaseSetting {
         super(SettingType.Input);
     }
 
-    // Getters and setters
+    @Override
+    public ValueHolder getValueHolder() {
+        return new ValueHolder(value, this.getType());
+    }
+
     public String getValue() {
         return value;
     }
+
     public void setValue(String value) {
         this.value = value;
     }
+
+    // Getters and setters
 
     public Integer getMaxCharacters() {
         return maxCharacters;

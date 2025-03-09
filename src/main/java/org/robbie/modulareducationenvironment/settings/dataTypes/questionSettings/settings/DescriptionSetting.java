@@ -1,5 +1,6 @@
 package org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.settings;
 
+import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.ValueHolder;
 import org.robbie.modulareducationenvironment.settings.dataTypes.questionSettings.types.SettingType;
 
 public class DescriptionSetting extends BaseSetting {
@@ -16,6 +17,11 @@ public class DescriptionSetting extends BaseSetting {
         super(SettingType.Description);
     }
 
+    @Override
+    public ValueHolder getValueHolder() {
+        return new ValueHolder(value, this.getType());
+    }
+
     public String getTitle() {
         return title;
     }
@@ -26,10 +32,6 @@ public class DescriptionSetting extends BaseSetting {
 
     public String getValue() {
         return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 }
 

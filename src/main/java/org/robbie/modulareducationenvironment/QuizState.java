@@ -1,5 +1,6 @@
 package org.robbie.modulareducationenvironment;
 
+import org.robbie.modulareducationenvironment.moduleHandler.Module;
 import org.robbie.modulareducationenvironment.questionBank.studentQuizAttempt;
 
 import java.util.*;
@@ -11,25 +12,32 @@ public class QuizState {
     private LinkedHashMap<UUID, QuestionState> questionStateMap;
     private Map<String, Object> additionalData; // Arbitrary data storage
 
-    public QuizState(studentQuizAttempt quizDatabaseState) {
-        this.quizDatabaseState = quizDatabaseState;
-        this.additionalData = new HashMap<String, Object>();
-        this.questionStateMap = quizDatabaseState.getQuestions().stream()
-                .collect(Collectors.toMap(
-                        questionAttempt -> questionAttempt.getStudentQuestionAttemptUUID(), // Key: use an identifier from questionAttempt
-                        questionAttempt -> new QuestionState(quizDatabaseState, questionAttempt, additionalData), // Value: create a QuestionState//TODO might need to change additional data as its quiz not question data
-                        (existing, replacement) -> existing,// wont happen but is needed for next line
-                        LinkedHashMap::new // Specify LinkedHashMap to preserve insertion order
-                ));
-    }
+//    public QuizState(studentQuizAttempt quizDatabaseState) {
+//        this.quizDatabaseState = quizDatabaseState;
+//        this.additionalData = new HashMap<String, Object>();
+//        this.questionStateMap = quizDatabaseState.getQuestions().stream()
+//                .collect(Collectors.toMap(
+//                        questionAttempt -> questionAttempt.getStudentQuestionAttemptUUID(), // Key: use an identifier from questionAttempt
+//                        questionAttempt -> new QuestionState(quizDatabaseState, questionAttempt, additionalData), // Value: create a QuestionState//TODO might need to change additional data as its quiz not question data
+//                        (existing, replacement) -> existing,// wont happen but is needed for next line
+//                        LinkedHashMap::new // Specify LinkedHashMap to preserve insertion order
+//                ));
+//    }
 
-    public QuizState(studentQuizAttempt quizDatabaseState, Map<String, Object> additionalData) {
+    public QuizState(studentQuizAttempt quizDatabaseState, Map<String, Object> additionalData, List<Module> modules) {
         this.quizDatabaseState = quizDatabaseState;
         this.additionalData = additionalData;
         this.questionStateMap = quizDatabaseState.getQuestions().stream()
                 .collect(Collectors.toMap(
                         questionAttempt -> questionAttempt.getStudentQuestionAttemptUUID(), // Key: use an identifier from questionAttempt
-                        questionAttempt -> new QuestionState(quizDatabaseState, questionAttempt, additionalData), // Value: create a QuestionState
+                        questionAttempt -> {
+                            //Get the question additional data, from quiz additionalData
+                            Object data = additionalData.get(questionAttempt.getStudentQuestionAttemptUUID().toString());
+                            // Ensure it's a Map, otherwise use an empty HashMap as default
+                            Map<String, Object> questionData = (data instanceof Map) ? (Map<String, Object>) data : new HashMap<>();
+
+                            return new QuestionState(quizDatabaseState, questionAttempt, questionData, Module.findModuleByName(modules, questionAttempt.getModuleName()));
+                        }, // Value: create a QuestionState
                         (existing, replacement) -> existing,// wont happen but is needed for next line
                         LinkedHashMap::new // Specify LinkedHashMap to preserve insertion order
                 ));
