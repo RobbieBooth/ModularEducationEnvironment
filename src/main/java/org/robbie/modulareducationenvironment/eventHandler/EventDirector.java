@@ -102,6 +102,10 @@ public class EventDirector {
                 questionList.values().forEach(quizQuestion -> {
                     quizQuestion.onQuizSave(quizState);
                 });
+                questionList.forEach((key, quizQuestion) ->{
+                    QuestionState thisQuestionState = quizState.getQuestionStateMap().get(key);
+                    quizQuestion.onThisQuestionSubmit(thisQuestionState);
+                });
                 questionList.values().forEach(quizQuestion -> {
                     quizQuestion.onQuizSubmit(quizState);
                 });
