@@ -8,7 +8,7 @@ import java.util.UUID;
 public class studentQuestionAttempt extends Question{
     @Id
     private UUID studentQuestionAttemptUUID;
-    private boolean flagged = true;
+    private boolean flagged = false;
     private Map<String, Object> settings;
     private Map<String, Object> additionalData;
 //    private UUID questionTemplateUUID;
