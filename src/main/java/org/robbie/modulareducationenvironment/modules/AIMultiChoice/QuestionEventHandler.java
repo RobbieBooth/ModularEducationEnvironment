@@ -175,6 +175,16 @@ public class QuestionEventHandler implements QuizQuestion {
         //Continue processing if it's a string
         String studentCode = (String) firstValue;
 
+        //Update that we have received the code and are generating the questions:
+        UUID quizID = recievingQuestionState.getQuizDatabaseState().getStudentQuizAttemptUUID();
+        UUID studentID = recievingQuestionState.getQuizDatabaseState().getUserUUID();
+        Map<String, Object> receivingQuestionAdditionalData = recievingQuestionState.getQuestionDatabaseState().getAdditionalData();
+        receivingQuestionAdditionalData.put("receivedCode", true);
+        UUID receivingQuestionStateQuestionID = recievingQuestionState.getQuestionDatabaseState().getStudentQuestionAttemptUUID();
+        studentQuizAttempt receivedQuizUpdate = moduleSaveService.saveQuestionBoth(quizID, receivingQuestionStateQuestionID, studentID, receivingQuestionAdditionalData, settings);
+        moduleMessagingService.sendQuestionUpdate(quizID, receivedQuizUpdate.getQuestion(receivingQuestionStateQuestionID).orElse(null));
+
+        //Generate Questions
         generateAiQuestions(recievingQuestionState, studentCode);
     }
 
@@ -227,7 +237,7 @@ public class QuestionEventHandler implements QuizQuestion {
         additionalData.put("isGenerated", true);
         studentQuizAttempt quizUpdate = moduleSaveService.saveQuestionBoth(quizID, questionID, studentID, additionalData, settings);
 
-        //send message
+        //send that we have generated questions
         moduleMessagingService.sendQuestionUpdate(quizID, quizUpdate.getQuestion(questionID).orElse(null));
     }
 }
