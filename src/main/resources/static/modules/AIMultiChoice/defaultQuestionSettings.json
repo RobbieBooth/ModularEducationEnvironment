@@ -13,12 +13,21 @@
       "tooltip": false,
       "required": true,
       "disabled": false,
-      "value": "This will be the ID which is displayed above the question which you would like to, when submitted, generate questions on. WARNING: since this is an early development of the application only the basic question module has been implimented and therefore it will take the first answer on that question specified. IE: if you have multiple questions on that question it will only take the answer to the first one to be generated - it should be some sort of text box."
+      "value": "This ID is displayed at the top of each module question as a large piece of text that looks something like this:\n52c2b1ac-2f95-48e7-80ee-dff576baf563\nIt serves as the unique identifier that links the module to the specific question we want to track for submission. Once the question is submitted, it will trigger the generation of additional questions based on the submitted code."
+    },
+    {
+      "type": "Description",
+      "title": "Note:",
+      "label": "Note:",
+      "tooltip": false,
+      "required": true,
+      "disabled": false,
+      "value": "Currently, only the BasicQuestion module has been implemented as part of early development. This means that the system will only consider the first answer provided for the specified question. If the question contains multiple responses, only the first one (typically a text box response, such as short answer or long answer on the BasicQuestion module) will be processed and used for generating subsequent questions."
     },
     {
       "type": "Input",
       "label": "Linked Question ID",
-      "tooltip": "This will be the ID which is displayed above the question which you would like to, when submitted, generate questions on. WARNING: since this is an early development of the application only the basic question module has been implimented and therefore it will take the first answer on that question specified. IE: if you have multiple questions on that question it will only take the answer to the first one to be generated - it should be some sort of text box.",
+      "tooltip": "This ID is displayed at the top of each module question as a large piece of text that looks something like this:\n52c2b1ac-2f95-48e7-80ee-dff576baf563\n Its listened to for submits which these questions will be generated on.",
       "required": true,
       "disabled": false,
       "value": "",
@@ -68,7 +77,7 @@
     {
       "type": "Input",
       "label": "Code Context",
-      "tooltip": "The context of what the task the student was asked to do. This can better help tailor question generation.",
+      "tooltip": "Optional: The context of what the task the student was asked to do. This can better help tailor question generation.",
       "required": true,
       "disabled": false,
       "value": "",
@@ -78,7 +87,7 @@
     {
       "type": "Input",
       "label": "Code Template",
-      "tooltip": "The code which was used given by the students for the task. Leave blank if all the code is the students. This allows for the AI to not ask questions about things the student didnt write.",
+      "tooltip": "Optional: The code which was used given by the students for the task. Leave blank if all the code is the students. This allows for the AI to not ask questions about things the student didnt write.",
       "required": true,
       "disabled": false,
       "value": "",
