@@ -45,11 +45,10 @@ class ClassService {
      */
     public Class updateClass(UUID id, String className, String classDescription, List<UUID> educators, List<UUID> students) {
         return classRepository.findById(id).map(existingClass -> {
-            existingClass.setClassName(className);
-            existingClass.setClassDescription(classDescription);
-            existingClass.setEducators(educators);
-            existingClass.setStudents(students);
-            Class updatedClass = classRepository.save(existingClass);
+            Class newClass = new Class(className, classDescription, educators, students, existingClass.getQuizzes(), existingClass.getAvailableQuizzes());
+            newClass.setId(existingClass.getId());
+
+            Class updatedClass = classRepository.save(newClass);
 
             //Update the users records with the classes new details
             updateUsersOnClassChange(existingClass, updatedClass);
